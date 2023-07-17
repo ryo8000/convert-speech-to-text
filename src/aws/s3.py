@@ -18,3 +18,18 @@ def get_bucket_path(s3_event: dict) -> tuple:
     key = urllib.parse.unquote_plus(
         s3_event["Records"][0]["s3"]["object"]["key"], encoding="utf-8")
     return bucket, key
+
+
+def get_object_url(bucket: str, key: str, region: str) -> str:
+    """Get the url of the S3 object.
+
+    Args:
+        bucket: S3 bucket name
+        key: S3 key name
+        region: S3 bucket region
+
+    Returns:
+        the url of the S3 object
+    """
+    bucket_region = f"{region}." if region != "us-east-1" else ""
+    return f"https://{bucket}.s3.{bucket_region}amazonaws.com/{key}"
