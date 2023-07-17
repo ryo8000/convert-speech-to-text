@@ -41,7 +41,7 @@ data "aws_iam_policy" "amazon_s3_full_access" {
 }
 
 resource "aws_iam_role" "lambda_role" {
-  name                 = "TranscribeRole"
+  name                 = "${var.service_name}Role"
   assume_role_policy   = data.aws_iam_policy_document.assume_role_policy.json
   description          = "only for Transcribe"
   max_session_duration = 3600
@@ -64,23 +64,23 @@ resource "aws_iam_role_policy_attachment" "amazon_s3_full_access_attach" {
   policy_arn = data.aws_iam_policy.amazon_s3_full_access.arn
 }
 
-resource "aws_lambda_function" "lambda" {
-  description = ""
+resource "aws_lambda_function" "lambda_transcriber" {
+  description = "start a transcription job."
   environment {
     variables = {
     }
   }
-  filename      = data.archive_file.zip.output_path
-  function_name = "hello-lambda"
-  handler       = "hello_lambda.lambda_handler"
+  function_name = "${var.service_name}-transcriber"
+  handler       = "transcriber.lambda_handler"
   architectures = [
     "x86_64"
   ]
-  source_code_hash = data.archive_file.zip.output_base64sha256
-  memory_size      = 128
+  filename         = data.archive_file.zip.output_path
+  memory_size      = var.lambda_memory_size
   role             = aws_iam_role.lambda_role.arn
-  runtime          = "python3.10"
-  timeout          = 3
+  runtime          = var.lambda_runtime
+  source_code_hash = data.archive_file.zip.output_base64sha256
+  timeout          = var.lambda_timeout
   tracing_config {
     mode = "PassThrough"
   }
