@@ -41,8 +41,12 @@ data "aws_iam_policy" "amazon_s3_full_access" {
 }
 
 resource "aws_iam_role" "lambda_role" {
-  name               = "TranscribeRole"
-  assume_role_policy = data.aws_iam_policy_document.assume_role_policy.json
+  name                 = "TranscribeRole"
+  assume_role_policy   = data.aws_iam_policy_document.assume_role_policy.json
+  description          = "only for Transcribe"
+  max_session_duration = 3600
+  path                 = "/"
+  tags                 = {}
 }
 
 resource "aws_iam_role_policy_attachment" "aws_lambda_basic_execution_role_attach" {
