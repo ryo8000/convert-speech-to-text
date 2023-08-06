@@ -3,7 +3,7 @@
 {
   "name": "Python 3",
   // Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
-  "image": "mcr.microsoft.com/devcontainers/python:1-3.11-bullseye"
+  "image": "mcr.microsoft.com/devcontainers/python:1-3.11-bullseye",
 
   // Features to add to the dev container. More info: https://containers.dev/features.
   // "features": {},
@@ -15,7 +15,67 @@
   // "postCreateCommand": "pip3 install --user -r requirements.txt",
 
   // Configure tool-specific properties.
-  // "customizations": {},
+  "customizations": {
+    "vscode": {
+      "settings": {
+        // autoDocstring
+        "autoDocstring.docstringFormat": "google",
+        // autopep8
+        "autopep8.args": [
+          "--aggressive",
+          "--aggressive"
+        ],
+        // Code Spell Checker
+        "cSpell.userWords": [
+          "autopep",
+          "Intelli",
+          "isort",
+          "Mypy",
+          "Pylance"
+        ],
+        // flake8
+        "flake8.args": [
+          "--max-line-length=150",
+          "--max-complexity=20"
+        ],
+        // isort
+        "isort.args": [
+          "--profile",
+          "black"
+        ],
+        // Mypy Type Checker
+        "mypy-type-checker.args": [
+          "--cache-dir=/dev/null"
+        ],
+        // Pylance
+        "python.languageServer": "Pylance", // for IntelliCode
+        "[python]": {
+          "editor.codeActionsOnSave": {
+            "source.organizeImports": true // for isort
+          },
+          "editor.formatOnType": true,
+          "editor.formatOnPaste": true,
+          "editor.formatOnSave": true,
+          "editor.tabSize": 4,
+          "files.eol": "\n",
+          "editor.defaultFormatter": "ms-python.autopep8"
+        }
+      },
+      "extensions": [
+        "njpwerner.autodocstring", // autoDocstring - Python Docstring Generator
+        "ms-python.autopep8", // autopep8
+        "streetsidesoftware.code-spell-checker", // Code Spell Checker
+        "dbaeumer.vscode-eslint", // ESLint(Default)
+        "ms-python.flake8", // flake8
+        "VisualStudioExptTeam.vscodeintellicode", // IntelliCode
+        "ms-python.isort", // isort
+        "MS-CEINTL.vscode-language-pack-ja", // Japanese Language Pack for Visual Studio Code
+        "ms-python.mypy-type-checker", // Mypy Type Checker
+        "ms-python.vscode-pylance", // Pylance(Default)
+        "ms-python.python" // Python(Default)
+      ]
+    }
+  }
 
   // Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
   // "remoteUser": "root"
