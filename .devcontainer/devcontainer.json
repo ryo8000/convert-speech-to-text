@@ -6,7 +6,7 @@
   "image": "mcr.microsoft.com/devcontainers/python:1-3.11-bullseye",
 
   // Features to add to the dev container. More info: https://containers.dev/features.
-  // "features": {},
+  "features": {},
 
   // Use 'forwardPorts' to make a list of ports inside the container available locally.
   // "forwardPorts": [],
@@ -16,7 +16,9 @@
 
   // Configure tool-specific properties.
   "customizations": {
+    // Configure properties specific to VS Code.
     "vscode": {
+      // Set *default* container specific settings.json values on container create.
       "settings": {
         // autoDocstring
         "autoDocstring.docstringFormat": "google",
@@ -24,14 +26,6 @@
         "autopep8.args": [
           "--aggressive",
           "--aggressive"
-        ],
-        // Code Spell Checker
-        "cSpell.userWords": [
-          "autopep",
-          "Intelli",
-          "isort",
-          "Mypy",
-          "Pylance"
         ],
         // flake8
         "flake8.args": [
@@ -49,22 +43,34 @@
         ],
         // Pylance
         "python.languageServer": "Pylance", // for IntelliCode
+        // Python
+        "python.testing.unittestArgs": [
+          "-v",
+          "-s",
+          ".",
+          "-p",
+          "test_*.py"
+        ],
+        "python.testing.pytestEnabled": false,
+        "python.testing.unittestEnabled": true,
         "[python]": {
           "editor.codeActionsOnSave": {
             "source.organizeImports": true // for isort
           },
+          "editor.defaultFormatter": "ms-python.autopep8",
           "editor.formatOnType": true,
           "editor.formatOnPaste": true,
           "editor.formatOnSave": true,
           "editor.tabSize": 4,
           "files.eol": "\n",
-          "editor.defaultFormatter": "ms-python.autopep8"
+          "files.insertFinalNewline": true,
+          "files.trimFinalNewlines": true,
+          "files.trimTrailingWhitespace": true
         }
       },
       "extensions": [
         "njpwerner.autodocstring", // autoDocstring - Python Docstring Generator
         "ms-python.autopep8", // autopep8
-        "streetsidesoftware.code-spell-checker", // Code Spell Checker
         "dbaeumer.vscode-eslint", // ESLint(Default)
         "ms-python.flake8", // flake8
         "VisualStudioExptTeam.vscodeintellicode", // IntelliCode
