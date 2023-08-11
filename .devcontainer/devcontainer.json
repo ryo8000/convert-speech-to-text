@@ -20,6 +20,21 @@
     "vscode": {
       // Set *default* container specific settings.json values on container create.
       "settings": {
+        // format settings
+        "editor.formatOnType": true,
+        "editor.formatOnPaste": true,
+        "editor.formatOnSave": true,
+        "files.insertFinalNewline": true,
+        "files.trimFinalNewlines": true,
+        "files.trimTrailingWhitespace": true,
+        // Path patterns of files and directories to hide.
+        "files.exclude": {
+          "build": true,
+          "dist": true,
+          "**/*.pyc": true,
+          "**/__pycache__": true,
+          "**/.mypy_cache/**": true
+        },
         // autoDocstring
         "autoDocstring.docstringFormat": "google",
         // autopep8
@@ -29,7 +44,7 @@
         ],
         // flake8
         "flake8.args": [
-          "--max-line-length=150",
+          "--max-line-length=120",
           "--max-complexity=20"
         ],
         // isort
@@ -37,41 +52,31 @@
           "--profile",
           "black"
         ],
-        // Mypy Type Checker
-        "mypy-type-checker.args": [
-          "--cache-dir=/dev/null"
-        ],
         // Pylance
         "python.languageServer": "Pylance", // for IntelliCode
         // Python
         "python.testing.unittestArgs": [
           "-v",
           "-s",
-          ".",
+          "./tests",
           "-p",
           "test_*.py"
         ],
         "python.testing.pytestEnabled": false,
         "python.testing.unittestEnabled": true,
         "[python]": {
+          "editor.tabSize": 4,
+          "files.eol": "\n",
           "editor.codeActionsOnSave": {
             "source.organizeImports": true // for isort
           },
-          "editor.defaultFormatter": "ms-python.autopep8",
-          "editor.formatOnType": true,
-          "editor.formatOnPaste": true,
-          "editor.formatOnSave": true,
-          "editor.tabSize": 4,
-          "files.eol": "\n",
-          "files.insertFinalNewline": true,
-          "files.trimFinalNewlines": true,
-          "files.trimTrailingWhitespace": true
+          "editor.defaultFormatter": "ms-python.autopep8"
         }
       },
       "extensions": [
         "njpwerner.autodocstring", // autoDocstring - Python Docstring Generator
         "ms-python.autopep8", // autopep8
-        "dbaeumer.vscode-eslint", // ESLint(Default)
+        // "dbaeumer.vscode-eslint", // ESLint(Default)
         "ms-python.flake8", // flake8
         "VisualStudioExptTeam.vscodeintellicode", // IntelliCode
         "ms-python.isort", // isort
