@@ -53,6 +53,7 @@
           "black"
         ],
         // Pylance
+        "python.analysis.importFormat": "absolute",
         "python.languageServer": "Pylance", // for IntelliCode
         // Python
         "python.testing.unittestArgs": [
