@@ -14,6 +14,19 @@
     "**/__pycache__": true,
     "**/.mypy_cache/**": true
   },
+  // Extension - Python
+  "python.testing.pytestEnabled": false,
+  "python.testing.unittestEnabled": true,
+  "python.testing.unittestArgs": [
+    "-v",
+    "-s",
+    "./tests",
+    "-p",
+    "test_*.py"
+  ],
+  // Extension - Pylance
+  "python.analysis.importFormat": "absolute",
+  "python.languageServer": "Pylance", // to activate IntelliCode
   // Extension - autoDocstring
   "autoDocstring.docstringFormat": "google",
   // Extension - autopep8
@@ -31,19 +44,6 @@
     "--profile=black",
     "--line-length=120"
   ],
-  // Extension - Pylance
-  "python.analysis.importFormat": "absolute",
-  "python.languageServer": "Pylance", // to activate IntelliCode
-  // Extension - Python
-  "python.testing.unittestArgs": [
-    "-v",
-    "-s",
-    "./tests",
-    "-p",
-    "test_*.py"
-  ],
-  "python.testing.pytestEnabled": false,
-  "python.testing.unittestEnabled": true,
   // Settings for python files
   "[python]": {
     "editor.tabSize": 4,
