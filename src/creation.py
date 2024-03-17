@@ -21,10 +21,14 @@ from aws import (
     s3,
     sqs,
 )
+from config import (
+    Config,
+)
 
 
 def lambda_handler(event: dict, context) -> None:
     print(json.dumps(event))
+    config = Config()
 
     # sqs
     body = sqs.get_message_info_list(event)[0]
@@ -42,5 +46,5 @@ def lambda_handler(event: dict, context) -> None:
     print(transcript)
 
     file_name_without_ext = os.path.splitext(os.path.basename(key))[0]
-    dist = f"t-output/{file_name_without_ext}.txt"
+    dist = f"{config.creation_dist_key}/{file_name_without_ext}.txt"
     s3_client.put_file(bucket, dist, transcript)

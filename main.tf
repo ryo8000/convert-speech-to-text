@@ -77,14 +77,15 @@ resource "aws_iam_role_policy_attachment" "amazon_sqs_full_access_attach" {
 # Lambda
 resource "aws_lambda_function" "lambda_transcription" {
   description = "start a transcription job."
-  # environment {
-  #   variables = {
-  #     AWS_S3_REGION   = var.aws_region
-  #     AWS_S3_BUCKET   = var.aws_s3_bucket
-  #     AWS_S3_SRC_DIR  = var.aws_s3_src_dir
-  #     AWS_S3_DIST_DIR = var.aws_s3_dist_dir
-  #   }
-  # }
+  environment {
+    variables = {
+      AWS_S3_BUCKET   = var.aws_s3_bucket
+      AWS_S3_BUCKET_REGION   = var.aws_region
+      AWS_S3_TRANSCRIPTION_DIST_KEY  = var.aws_s3_transcription_dist_key
+      AWS_S3_CREATION_DIST_KEY = var.aws_s3_creation_dist_key
+      AWS_TRANSCRIBE_LANGUAGE_CODE = var.aws_transcribe_language_code
+    }
+  }
   function_name = "${var.service_name}-transcription"
   handler       = "transcription.lambda_handler"
   architectures = [
@@ -103,6 +104,15 @@ resource "aws_lambda_function" "lambda_transcription" {
 
 resource "aws_lambda_function" "lambda_creation" {
   description   = "create file."
+    environment {
+    variables = {
+      AWS_S3_BUCKET   = var.aws_s3_bucket
+      AWS_S3_BUCKET_REGION   = var.aws_region
+      AWS_S3_TRANSCRIPTION_DIST_KEY  = var.aws_s3_transcription_dist_key
+      AWS_S3_CREATION_DIST_KEY = var.aws_s3_creation_dist_key
+      AWS_TRANSCRIBE_LANGUAGE_CODE = var.aws_transcribe_language_code
+    }
+  }
   function_name = "${var.service_name}-creation"
   handler       = "creation.lambda_handler"
   architectures = [

@@ -16,19 +16,25 @@ variable "aws_region" {
 }
 
 variable "aws_s3_bucket" {
-  description = "AWS S3 src bucket"
+  description = "AWS S3 bucket"
   type        = string
 }
 
-variable "aws_s3_src_dir" {
-  default     = "input"
-  description = "AWS S3 src dir"
-  type        = string
-}
-
-variable "aws_s3_dist_dir" {
+variable "aws_s3_transcription_dist_key" {
   default     = "output"
-  description = "AWS S3 dist dir"
+  description = "AWS S3 transcription dist key"
+  type        = string
+}
+
+variable "aws_s3_creation_dist_key" {
+  default     = "output"
+  description = "AWS S3 creation dist key"
+  type        = string
+}
+
+variable "aws_transcribe_language_code" {
+  default     = "ja-JP"
+  description = "language_code"
   type        = string
 }
 
