@@ -33,6 +33,8 @@ def lambda_handler(event: dict, context) -> None:
     # sqs
     body = sqs.get_message_info_list(event)[0]
     print(json.dumps(body))
+    if "s3:TestEvent" in body:
+        return
     bucket, key = s3.get_bucket_path(body)
 
     # s3
