@@ -49,3 +49,39 @@ variable "lambda_timeout" {
   description = "lambda runtime"
   type        = number
 }
+
+variable "lambda_event_batch_size" {
+  default     = 10
+  description = "lambda event batch size"
+  type        = number
+}
+
+variable "sqs_delay_seconds" {
+  default     = 0
+  description = "sqs delay seconds"
+  type        = number
+}
+
+variable "sqs_max_message_size" {
+  default     = 262144
+  description = "sqs max message size"
+  type        = number
+}
+
+variable "sqs_message_retention_seconds" {
+  default     = 345600
+  description = "sqs message retention seconds"
+  type        = number
+}
+
+variable "sqs_receive_wait_time_seconds" {
+  default     = 0
+  description = "sqs receive wait time seconds"
+  type        = number
+}
+
+variable "sqs_visibility_timeout_seconds" {
+  default     = 30
+  description = "sqs visibility timeout seconds"
+  type        = number
+}
