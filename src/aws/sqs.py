@@ -1,8 +1,12 @@
 import json
 
-import boto3
+from .model import (
+    SqsEvent,
+)
 
-sqs_client = boto3.client("sqs")
+
+def convert_sqs_event(data: dict) -> SqsEvent:
+    return SqsEvent(**data)
 
 
 def get_message_info_list(sqs_event: dict) -> list:
