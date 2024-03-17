@@ -19,9 +19,9 @@ import os
 
 class Config:
     """Config class."""
+
     def __init__(self):
-        """__init__ method.
-        """
+        """__init__ method."""
         self.bucket = os.environ["AWS_S3_BUCKET"]
         self.bucket_region = os.environ["AWS_S3_BUCKET_REGION"]
         self.transcription_dist_key = os.environ["AWS_S3_TRANSCRIPTION_DIST_KEY"]

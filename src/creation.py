@@ -16,6 +16,9 @@
 
 import json
 import os
+from dataclasses import (
+    dataclass,
+)
 
 from aws import (
     s3,
@@ -42,9 +45,18 @@ def lambda_handler(event: dict, context) -> None:
     json_contents = s3_client.get_json_contents(bucket, key)
     print(json.dumps(json_contents))
 
+    # txt
     transcript = json_contents["results"]["transcripts"][0]["transcript"]
     print(transcript)
 
     file_name_without_ext = os.path.splitext(os.path.basename(key))[0]
     dist = f"{config.creation_dist_key}/{file_name_without_ext}.txt"
     s3_client.put_file(bucket, dist, transcript)
+
+    # csv
+    rows = ["start_time, end_time, content"]
+    for item in json_contents["results"]["items"]:
+        rows.append(f'{item["start_time"]}, {item["end_time"]}, {item["alternatives"][0]["content"]}')
+
+    dist = f"{config.creation_dist_key}/{file_name_without_ext}.csv"
+    s3_client.put_file(bucket, dist, "\n".join(rows))
