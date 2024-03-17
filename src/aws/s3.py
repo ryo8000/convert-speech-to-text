@@ -1,3 +1,4 @@
+import json
 import urllib.parse
 
 import boto3
@@ -15,8 +16,7 @@ def get_bucket_path(s3_event: dict) -> tuple:
         S3 bucket name and key
     """
     bucket = s3_event["Records"][0]["s3"]["bucket"]["name"]
-    key = urllib.parse.unquote_plus(
-        s3_event["Records"][0]["s3"]["object"]["key"], encoding="utf-8")
+    key = urllib.parse.unquote_plus(s3_event["Records"][0]["s3"]["object"]["key"], encoding="utf-8")
     return bucket, key
 
 
@@ -33,3 +33,16 @@ def get_object_url(bucket: str, key: str, region: str) -> str:
     """
     bucket_region = f"{region}." if region != "us-east-1" else ""
     return f"https://{bucket}.s3.{bucket_region}amazonaws.com/{key}"
+
+
+def get_json_contents(bucket: str, path: str) -> dict:
+    response = get_file(bucket, path)
+    return json.loads(response["Body"].read().decode("utf-8"))
+
+
+def get_file(bucket: str, path: str) -> dict:
+    return s3.Object(bucket, path).get()
+
+
+def put_file(bucket: str, path: str, contents: str) -> dict:
+    return s3.Object(bucket, path).put(Body=contents)
