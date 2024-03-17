@@ -21,6 +21,11 @@ import boto3
 
 class TranscribeClient:
     def __init__(self, client=None):
+        """__init__ method.
+
+        Args:
+            client: transcribe client
+        """
         self.client = client or boto3.client("transcribe")
 
     def start_transcription_job(self, src_object_url: str, language_code: str, dist_bucket: str, dist_key: str) -> dict:

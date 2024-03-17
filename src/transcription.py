@@ -44,11 +44,6 @@ def lambda_handler(event: dict, context) -> None:
     print(s3_object_url)
 
     # transcribe
-    try:
-        result = TranscribeClient().start_transcription_job(
-            s3_object_url, config.language_code, bucket, config.transcription_dist_key
-        )
-    except Exception as e:
-        print(e)
-
-    print(result)
+    TranscribeClient().start_transcription_job(
+        s3_object_url, config.language_code, bucket, config.transcription_dist_key
+    )

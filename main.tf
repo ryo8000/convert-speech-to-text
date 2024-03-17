@@ -129,13 +129,6 @@ resource "aws_lambda_function" "lambda_creation" {
   }
 }
 
-resource "aws_lambda_permission" "lambda_transcription_permission" {
-  action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.lambda_transcription.function_name
-  principal     = "s3.amazonaws.com"
-  source_arn    = "arn:aws:s3:::${var.aws_s3_bucket}"
-}
-
 resource "aws_lambda_event_source_mapping" "LambdaTranscriptionEventSourceMapping" {
   batch_size       = var.lambda_event_batch_size
   event_source_arn = aws_sqs_queue.TranscriptionQueue.arn
