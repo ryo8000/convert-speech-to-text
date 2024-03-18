@@ -56,7 +56,10 @@ def lambda_handler(event: dict, context) -> None:
     # csv
     rows = ["start_time, end_time, content"]
     for item in json_contents["results"]["items"]:
-        rows.append(f'{item["start_time"]}, {item["end_time"]}, {item["alternatives"][0]["content"]}')
+        start_time = item.get("start_time", "")
+        end_time = item.get("end_time", "")
+        content = item["alternatives"][0]["content"]
+        rows.append(f"{start_time}, {end_time}, {content}")
 
     dist = f"{config.creation_dist_key}/{file_name_without_ext}.csv"
     s3_client.put_file(bucket, dist, "\n".join(rows))
