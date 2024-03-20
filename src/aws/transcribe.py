@@ -63,6 +63,3 @@ class TranscribeClient:
             OutputKey=f"{dist_key}/{file_name_prefix}{file_name_without_ext}.json",
         )
         return response
-
-    def create_uuid():
-        return uuid.uuid4()
