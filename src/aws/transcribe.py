@@ -15,6 +15,7 @@
 """Transcribe module."""
 
 import os
+import uuid
 from datetime import (
     datetime,
 )
@@ -49,16 +50,19 @@ class TranscribeClient:
         """
         file_name = os.path.basename(src_object_url)
         file_name_without_ext, ext = os.path.splitext(file_name)
-        formatted_datetime = self.current_datetime.strftime(self.DATETIME_FORMAT)
+        file_name_prefix = f"{self.current_datetime.strftime(self.DATETIME_FORMAT)}_{uuid.uuid4()}_"
 
         response = self.client.start_transcription_job(
-            TranscriptionJobName=f"{formatted_datetime}-{file_name}",
+            TranscriptionJobName=f"{file_name_prefix}{file_name}",
             LanguageCode=language_code,
             MediaFormat=ext[1:],
             Media={
                 "MediaFileUri": src_object_url,
             },
             OutputBucketName=dist_bucket,
-            OutputKey=f"{dist_key}/{formatted_datetime}-{file_name_without_ext}.json",
+            OutputKey=f"{dist_key}/{file_name_prefix}{file_name_without_ext}.json",
         )
         return response
+
+    def create_uuid():
+        return uuid.uuid4()
