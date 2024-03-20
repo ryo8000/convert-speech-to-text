@@ -1,0 +1,20 @@
+{
+  "Records": [
+    {
+      "messageId": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+      "receiptHandle": "abcde67890abcde67890abcde67890abcde67890abcde67890abcde67890abcde67890abcde67890abcde67890abcde67890abcde67890abcde67890abcde67890abcde67890abcde67890abcde67890abcde67890abcde67890abcde67890abcde67890abcde67890abcde67890abcde67890abcde67890abcde67890abcde67890abcde67890abcde67890abcde67890abcde67890abcde67890abcde67890abcde67890abcde67890abcde67890abcde67890abcde67890abcde67890abcde67890abcde67890abcde67890abcde67890abcde67890ab",
+      "body": "{\"Service\":\"Amazon S3\",\"Event\":\"s3:TestEvent\",\"Time\":\"2024-03-16T22:40:59.346Z\",\"Bucket\":\"my-bucket\",\"RequestId\":\"ABCDE67890ABCDE6\",\"HostId\":\"abcde67890abcde67890abcde67890abcde67890abcde67890abcde67890abcde67890abcde6\"}",
+      "attributes": {
+        "ApproximateReceiveCount": "420",
+        "SentTimestamp": "1710628859406",
+        "SenderId": "ABCDE67890ABCDE67890A:S3-PROD-S3WS",
+        "ApproximateFirstReceiveTimestamp": "1710628859408"
+      },
+      "messageAttributes": {},
+      "md5OfBody": "abcde67890abcde67890abcde67890ab",
+      "eventSource": "aws:sqs",
+      "eventSourceARN": "arn:aws:sqs:ap-northeast-1:xxxxxxxxxxxx:MyQueue",
+      "awsRegion": "ap-northeast-1"
+    }
+  ]
+}
