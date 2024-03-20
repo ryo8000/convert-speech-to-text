@@ -15,6 +15,9 @@
 """Transcription module."""
 
 import json
+from datetime import (
+    datetime,
+)
 
 from aws import (
     lambda_event,
@@ -31,6 +34,7 @@ from config import (
 def lambda_handler(event: dict, context) -> None:
     print(json.dumps(event))
     config = Config()
+    current_datetime = datetime.now()
 
     sqs_event = lambda_event.convert_dict_to_sqs_event(event)
     for sqs_record in sqs_event.records:
@@ -46,6 +50,6 @@ def lambda_handler(event: dict, context) -> None:
         print(s3_object_url)
 
         # start transcription job
-        TranscribeClient().start_transcription_job(
+        TranscribeClient(current_datetime).start_transcription_job(
             s3_object_url, config.language_code, bucket, config.transcription_dist_key
         )

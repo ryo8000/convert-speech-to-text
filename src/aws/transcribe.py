@@ -15,17 +15,24 @@
 """Transcribe module."""
 
 import os
+from datetime import (
+    datetime,
+)
 
 import boto3
 
 
 class TranscribeClient:
-    def __init__(self, client=None):
+    DATETIME_FORMAT = "%Y%m%d%H%M%S"
+
+    def __init__(self, current_datetime: datetime, client=None):
         """__init__ method.
 
         Args:
+            current_datetime: current datetime
             client: transcribe client
         """
+        self.current_datetime = current_datetime
         self.client = client or boto3.client("transcribe")
 
     def start_transcription_job(self, src_object_url: str, language_code: str, dist_bucket: str, dist_key: str) -> dict:
@@ -42,15 +49,16 @@ class TranscribeClient:
         """
         file_name = os.path.basename(src_object_url)
         file_name_without_ext, ext = os.path.splitext(file_name)
+        formatted_datetime = self.current_datetime.strftime(self.DATETIME_FORMAT)
 
         response = self.client.start_transcription_job(
-            TranscriptionJobName=file_name,
+            TranscriptionJobName=f"{formatted_datetime}-{file_name}",
             LanguageCode=language_code,
             MediaFormat=ext[1:],
             Media={
                 "MediaFileUri": src_object_url,
             },
             OutputBucketName=dist_bucket,
-            OutputKey=f"{dist_key}/{file_name_without_ext}.json",
+            OutputKey=f"{dist_key}/{formatted_datetime}-{file_name_without_ext}.json",
         )
         return response

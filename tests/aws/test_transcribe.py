@@ -13,6 +13,9 @@
 # limitations under the License.
 
 import unittest
+from datetime import (
+    datetime,
+)
 
 import boto3
 from moto import (
@@ -27,23 +30,24 @@ from src.aws.transcribe import (
 class TestTranscribeClient(unittest.TestCase):
     @mock_aws
     def setUp(self):
-        self.target = TranscribeClient(client=boto3.client("transcribe", region_name="us-west-1"))
+        # date_time = datetime.now()
+        date_time = datetime.strptime("2024-02-29 23:59:59.999999", "%Y-%m-%d %H:%M:%S.%f")
+        self.target = TranscribeClient(
+            current_datetime=date_time, client=boto3.client("transcribe", region_name="us-west-1")
+        )
 
     @mock_aws
     def test_start_transcription_job(self):
-        ext = "mp3"
-        filename = f"audiofile.{ext}"
-        src_object_url = f"https://src-bucket.s3.us-west-1.amazonaws.com/input/{filename}"
-        language_code = "en-US"
+        src_object_url = "https://src-bucket.s3.us-west-1.amazonaws.com/input/audiofile.mp3"
 
         response = self.target.start_transcription_job(
             src_object_url=src_object_url,
-            language_code=language_code,
+            language_code="en-US",
             dist_bucket="dist-bucket",
-            dist_key="output"
+            dist_key="output",
         )
         self.assertIn("TranscriptionJob", response)
-        self.assertEqual(response["TranscriptionJob"]["TranscriptionJobName"], filename)
-        self.assertEqual(response["TranscriptionJob"]["LanguageCode"], language_code)
-        self.assertEqual(response["TranscriptionJob"]["MediaFormat"], ext)
+        self.assertEqual(response["TranscriptionJob"]["TranscriptionJobName"], "20240229235959-audiofile.mp3")
+        self.assertEqual(response["TranscriptionJob"]["LanguageCode"], "en-US")
+        self.assertEqual(response["TranscriptionJob"]["MediaFormat"], "mp3")
         self.assertEqual(response["TranscriptionJob"]["Media"]["MediaFileUri"], src_object_url)
