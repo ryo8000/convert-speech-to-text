@@ -17,8 +17,8 @@
 import json
 
 from aws import (
+    lambda_event,
     s3,
-    sqs,
 )
 from aws.transcribe import (
     TranscribeClient,
@@ -32,18 +32,20 @@ def lambda_handler(event: dict, context) -> None:
     print(json.dumps(event))
     config = Config()
 
-    # sqs
-    body = sqs.get_message_info_list(event)[0]
-    print(json.dumps(body))
-    if "s3:TestEvent" in body:
-        return
-    bucket, key = s3.get_bucket_path(body)
+    sqs_event = lambda_event.convert_dict_to_sqs_event(event)
+    for sqs_record in sqs_event.records:
+        s3_event = sqs_record.body
+        if not s3_event:
+            continue
 
-    # s3
-    s3_object_url = s3.get_object_url(bucket, key, config.bucket_region)
-    print(s3_object_url)
+        # create s3 object URL
+        s3_record = s3_event.records[0]
+        bucket = s3_record.s3.bucket.name
+        key = s3_record.s3.object.key
+        s3_object_url = s3.get_object_url(bucket, key, config.bucket_region)
+        print(s3_object_url)
 
-    # transcribe
-    TranscribeClient().start_transcription_job(
-        s3_object_url, config.language_code, bucket, config.transcription_dist_key
-    )
+        # start transcription job
+        TranscribeClient().start_transcription_job(
+            s3_object_url, config.language_code, bucket, config.transcription_dist_key
+        )

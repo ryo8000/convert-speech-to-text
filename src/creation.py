@@ -16,13 +16,10 @@
 
 import json
 import os
-from dataclasses import (
-    dataclass,
-)
 
 from aws import (
+    lambda_event,
     s3,
-    sqs,
 )
 from config import (
     Config,
@@ -33,33 +30,35 @@ def lambda_handler(event: dict, context) -> None:
     print(json.dumps(event))
     config = Config()
 
-    # sqs
-    body = sqs.get_message_info_list(event)[0]
-    print(json.dumps(body))
-    if "s3:TestEvent" in body:
-        return
-    bucket, key = s3.get_bucket_path(body)
+    sqs_event = lambda_event.convert_dict_to_sqs_event(event)
+    for sqs_record in sqs_event.records:
+        s3_event = sqs_record.body
+        if not s3_event:
+            continue
 
-    # s3
-    s3_client = s3.S3Client()
-    json_contents = s3_client.get_json_contents(bucket, key)
-    print(json.dumps(json_contents))
+        # retrieve the json file content output by the transcription job
+        s3_record = s3_event.records[0]
+        bucket = s3_record.s3.bucket.name
+        key = s3_record.s3.object.key
+        s3_client = s3.S3Client()
+        json_contents = s3_client.get_json_contents(bucket, key)
+        print(json.dumps(json_contents))
 
-    # txt
-    transcript = json_contents["results"]["transcripts"][0]["transcript"]
-    print(transcript)
+        # txt
+        transcript = json_contents["results"]["transcripts"][0]["transcript"]
+        print(transcript)
 
-    file_name_without_ext = os.path.splitext(os.path.basename(key))[0]
-    dist = f"{config.creation_dist_key}/{file_name_without_ext}.txt"
-    s3_client.put_file(bucket, dist, transcript)
+        file_name_without_ext = os.path.splitext(os.path.basename(key))[0]
+        dist = f"{config.creation_dist_key}/{file_name_without_ext}.txt"
+        s3_client.put_file(bucket, dist, transcript)
 
-    # csv
-    rows = ["start_time, end_time, content"]
-    for item in json_contents["results"]["items"]:
-        start_time = item.get("start_time", "")
-        end_time = item.get("end_time", "")
-        content = item["alternatives"][0]["content"]
-        rows.append(f"{start_time}, {end_time}, {content}")
+        # csv
+        rows = ["start_time, end_time, content"]
+        for item in json_contents["results"]["items"]:
+            start_time = item.get("start_time", "")
+            end_time = item.get("end_time", "")
+            content = item["alternatives"][0]["content"]
+            rows.append(f"{start_time}, {end_time}, {content}")
 
-    dist = f"{config.creation_dist_key}/{file_name_without_ext}.csv"
-    s3_client.put_file(bucket, dist, "\n".join(rows))
+        dist = f"{config.creation_dist_key}/{file_name_without_ext}.csv"
+        s3_client.put_file(bucket, dist, "\n".join(rows))

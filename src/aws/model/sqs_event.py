@@ -35,10 +35,9 @@ class SqsRecord:
 
     @classmethod
     def from_event(cls, event: dict):
-        s3_event = None
         body_dict = json.loads(event["body"])
-        if body_dict.get("Records", {}):
-            s3_event = S3Event.from_event(body_dict)
+        # when s3 event is a test event, the key of "Records" is not present
+        s3_event = S3Event.from_event(body_dict) if body_dict.get("Records", {}) else None
         return cls(
             messageId=event["messageId"],
             body=s3_event,

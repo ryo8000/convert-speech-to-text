@@ -26,6 +26,6 @@ def convert_dict_to_sqs_event(event: dict) -> SqsEvent:
         event: event to be converted
 
     Returns:
-        SqsEvent: converted event
+        converted event
     """
     return SqsEvent.from_event(event)

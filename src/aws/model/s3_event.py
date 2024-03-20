@@ -14,6 +14,7 @@
 
 """S3 event module."""
 
+import urllib.parse
 from dataclasses import (
     dataclass,
 )
@@ -51,7 +52,12 @@ class S3Object:
 
     @classmethod
     def from_event(cls, event: dict):
-        return cls(key=event["key"], size=event["size"], e_tag=event["eTag"], sequencer=event["sequencer"])
+        return cls(
+            key=urllib.parse.unquote_plus(event["key"], encoding="utf-8"),
+            size=event["size"],
+            e_tag=event["eTag"],
+            sequencer=event["sequencer"],
+        )
 
 
 @dataclass
