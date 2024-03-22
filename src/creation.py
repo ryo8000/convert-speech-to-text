@@ -23,7 +23,9 @@ from logging import (
 
 from aws import (
     lambda_event,
-    s3,
+)
+from aws.s3 import (
+    S3Client,
 )
 from aws.transcribe import (
     TranscribeClient,
@@ -38,8 +40,16 @@ logger.setLevel(INFO)
 
 def lambda_handler(event: dict, context) -> None:
     logger.info(json.dumps(event))
-    config = Config()
 
+    config = Config()
+    s3_client = S3Client()
+    transcribe_client = TranscribeClient()
+
+    main(event, config, s3_client, transcribe_client)
+
+
+def main(event: dict, config: Config, s3_client: S3Client, transcribe_client: TranscribeClient):
+    # Process each message received by the SQS.
     sqs_event = lambda_event.convert_dict_to_sqs_event(event)
     for sqs_record in sqs_event.records:
         s3_event = sqs_record.body
@@ -50,7 +60,6 @@ def lambda_handler(event: dict, context) -> None:
         s3_record = s3_event.records[0]
         bucket = s3_record.s3.bucket.name
         key = s3_record.s3.object.key
-        s3_client = s3.S3Client()
         json_contents = s3_client.get_json_contents(bucket, key)
         logger.info(json.dumps(json_contents))
 
@@ -74,4 +83,4 @@ def lambda_handler(event: dict, context) -> None:
         s3_client.put_file(bucket, dist, "\n".join(rows))
 
         # delete transcription job
-        TranscribeClient().delete_transcription_job(file_name_without_ext)
+        transcribe_client.delete_transcription_job(file_name_without_ext)

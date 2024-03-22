@@ -40,9 +40,16 @@ logger.setLevel(INFO)
 
 def lambda_handler(event: dict, context) -> None:
     logger.info(json.dumps(event))
+
     config = Config()
     current_datetime = datetime.now()
+    transcribe_client = TranscribeClient()
 
+    main(event, config, current_datetime, transcribe_client)
+
+
+def main(event: dict, config: Config, current_datetime: datetime, transcribe_client: TranscribeClient):
+    # Process each message received by the SQS.
     sqs_event = lambda_event.convert_dict_to_sqs_event(event)
     for sqs_record in sqs_event.records:
         s3_event = sqs_record.body
@@ -57,6 +64,6 @@ def lambda_handler(event: dict, context) -> None:
         logger.info(s3_object_url)
 
         # start transcription job
-        TranscribeClient().start_transcription_job(
+        transcribe_client.start_transcription_job(
             current_datetime, s3_object_url, config.language_code, bucket, config.transcription_dist_key
         )
