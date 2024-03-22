@@ -18,6 +18,10 @@ import json
 from datetime import (
     datetime,
 )
+from logging import (
+    INFO,
+    getLogger,
+)
 
 from aws import (
     lambda_event,
@@ -30,9 +34,12 @@ from config import (
     Config,
 )
 
+logger = getLogger(__name__)
+logger.setLevel(INFO)
+
 
 def lambda_handler(event: dict, context) -> None:
-    print(json.dumps(event))
+    logger.info(json.dumps(event))
     config = Config()
     current_datetime = datetime.now()
 
@@ -47,7 +54,7 @@ def lambda_handler(event: dict, context) -> None:
         bucket = s3_record.s3.bucket.name
         key = s3_record.s3.object.key
         s3_object_url = s3.get_object_url(bucket, key, config.bucket_region)
-        print(s3_object_url)
+        logger.info(s3_object_url)
 
         # start transcription job
         TranscribeClient(current_datetime).start_transcription_job(

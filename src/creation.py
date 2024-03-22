@@ -16,6 +16,10 @@
 
 import json
 import os
+from logging import (
+    INFO,
+    getLogger,
+)
 
 from aws import (
     lambda_event,
@@ -25,9 +29,12 @@ from config import (
     Config,
 )
 
+logger = getLogger(__name__)
+logger.setLevel(INFO)
+
 
 def lambda_handler(event: dict, context) -> None:
-    print(json.dumps(event))
+    logger.info(json.dumps(event))
     config = Config()
 
     sqs_event = lambda_event.convert_dict_to_sqs_event(event)
@@ -42,11 +49,11 @@ def lambda_handler(event: dict, context) -> None:
         key = s3_record.s3.object.key
         s3_client = s3.S3Client()
         json_contents = s3_client.get_json_contents(bucket, key)
-        print(json.dumps(json_contents))
+        logger.info(json.dumps(json_contents))
 
         # txt
         transcript = json_contents["results"]["transcripts"][0]["transcript"]
-        print(transcript)
+        logger.info(transcript)
 
         file_name_without_ext = os.path.splitext(os.path.basename(key))[0]
         dist = f"{config.creation_dist_key}/{file_name_without_ext}.txt"
