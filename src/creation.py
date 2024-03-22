@@ -25,6 +25,9 @@ from aws import (
     lambda_event,
     s3,
 )
+from aws.transcribe import (
+    TranscribeClient,
+)
 from config import (
     Config,
 )
@@ -69,3 +72,6 @@ def lambda_handler(event: dict, context) -> None:
 
         dist = f"{config.creation_dist_key}/{file_name_without_ext}.csv"
         s3_client.put_file(bucket, dist, "\n".join(rows))
+
+        # delete transcription job
+        TranscribeClient().delete_transcription_job(file_name_without_ext)

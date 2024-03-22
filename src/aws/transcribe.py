@@ -63,3 +63,14 @@ class TranscribeClient:
             OutputBucketName=dist_bucket,
             OutputKey=f"{dist_key}/{transcription_file_name}.json",
         )
+
+    def delete_transcription_job(self, job_name: str) -> dict:
+        """Delete a transcription job.
+
+        Args:
+            job_name: job to be deleted
+
+        Returns:
+            data about the job
+        """
+        return self.client.delete_transcription_job(TranscriptionJobName=job_name)
