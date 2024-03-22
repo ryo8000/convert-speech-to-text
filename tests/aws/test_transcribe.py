@@ -34,10 +34,7 @@ from src.aws.transcribe import (
 class TestTranscribeClient(unittest.TestCase):
     @mock_aws
     def setUp(self):
-        date_time = datetime.strptime("2024-02-29 23:59:59.999999", "%Y-%m-%d %H:%M:%S.%f")
-        self.target = TranscribeClient(
-            current_datetime=date_time, client=boto3.client("transcribe", region_name="us-west-1")
-        )
+        self.target = TranscribeClient(client=boto3.client("transcribe", region_name="us-west-1"))
 
     @mock_aws
     @patch("uuid.uuid4")
@@ -48,10 +45,11 @@ class TestTranscribeClient(unittest.TestCase):
         src_object_url = "https://src-bucket.s3.us-west-1.amazonaws.com/input/audiofile.mp3"
 
         response = self.target.start_transcription_job(
-            src_object_url=src_object_url,
-            language_code="en-US",
-            dist_bucket="dist-bucket",
-            dist_key="output",
+            datetime.strptime("2024-02-29 23:59:59.999999", "%Y-%m-%d %H:%M:%S.%f"),
+            src_object_url,
+            "en-US",
+            "dist-bucket",
+            "output",
         )
         self.assertIn("TranscriptionJob", response)
         self.assertEqual(

@@ -26,20 +26,21 @@ import boto3
 class TranscribeClient:
     DATETIME_FORMAT = "%Y%m%d%H%M%S"
 
-    def __init__(self, current_datetime: datetime, client=None):
+    def __init__(self, client=None):
         """__init__ method.
 
         Args:
-            current_datetime: current datetime
             client: transcribe client
         """
-        self.current_datetime = current_datetime
         self.client = client or boto3.client("transcribe")
 
-    def start_transcription_job(self, src_object_url: str, language_code: str, dist_bucket: str, dist_key: str) -> dict:
-        """Starts a transcription job.
+    def start_transcription_job(
+        self, current_datetime: datetime, src_object_url: str, language_code: str, dist_bucket: str, dist_key: str
+    ) -> dict:
+        """Start a transcription job.
 
         Args:
+            current_datetime: current datetime
             src_object_url: S3 object url
             language_code: the language code that represents the language spoken in the input media file.
             dist_bucket: S3 bucket name of text data output destination
@@ -49,17 +50,16 @@ class TranscribeClient:
             data about the job
         """
         file_name = os.path.basename(src_object_url)
-        file_name_without_ext, ext = os.path.splitext(file_name)
-        file_name_prefix = f"{self.current_datetime.strftime(self.DATETIME_FORMAT)}_{uuid.uuid4()}_"
+        ext = os.path.splitext(file_name)[1]
+        transcription_file_name = f"{current_datetime.strftime(self.DATETIME_FORMAT)}_{uuid.uuid4()}_{file_name}"
 
-        response = self.client.start_transcription_job(
-            TranscriptionJobName=f"{file_name_prefix}{file_name}",
+        return self.client.start_transcription_job(
+            TranscriptionJobName=transcription_file_name,
             LanguageCode=language_code,
             MediaFormat=ext[1:],
             Media={
                 "MediaFileUri": src_object_url,
             },
             OutputBucketName=dist_bucket,
-            OutputKey=f"{dist_key}/{file_name_prefix}{file_name_without_ext}.json",
+            OutputKey=f"{dist_key}/{transcription_file_name}.json",
         )
-        return response
