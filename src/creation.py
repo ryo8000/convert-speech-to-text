@@ -19,6 +19,7 @@ import os
 from logging import INFO, getLogger
 
 from aws import lambda_event
+from aws.model import TranscribeOutput
 from aws.s3 import S3Client
 from aws.transcribe import TranscribeClient
 from config import Config
@@ -38,7 +39,7 @@ def lambda_handler(event: dict, context) -> None:
 
 
 def main(event: dict, config: Config, s3_client: S3Client, transcribe_client: TranscribeClient):
-    # Process each message received by the SQS.
+    # process each message received by the SQS.
     sqs_event = lambda_event.convert_dict_to_sqs_event(event)
     for sqs_record in sqs_event.records:
         s3_event = sqs_record.body
@@ -50,23 +51,18 @@ def main(event: dict, config: Config, s3_client: S3Client, transcribe_client: Tr
         bucket = s3_record.s3.bucket.name
         key = s3_record.s3.object.key
         json_contents = s3_client.get_json_contents(bucket, key)
-        logger.info(json.dumps(json_contents))
+        logger.debug(json.dumps(json_contents))
+        transcribe_output = TranscribeOutput.from_contents(json_contents)
 
         # txt
-        transcript = json_contents["results"]["transcripts"][0]["transcript"]
-        logger.info(transcript)
-
         file_name_without_ext = os.path.splitext(os.path.basename(key))[0]
         dist = f"{config.creation_dist_key}/{file_name_without_ext}.txt"
-        s3_client.put_file(bucket, dist, transcript)
+        s3_client.put_file(bucket, dist, transcribe_output.results.transcripts[0].transcript)
 
         # csv
         rows = ["start_time, end_time, content"]
-        for item in json_contents["results"]["items"]:
-            start_time = item.get("start_time", "")
-            end_time = item.get("end_time", "")
-            content = item["alternatives"][0]["content"]
-            rows.append(f"{start_time}, {end_time}, {content}")
+        for item in transcribe_output.results.items:
+            rows.append(f"{item.start_time}, {item.end_time}, {item.alternatives[0].content}")
 
         dist = f"{config.creation_dist_key}/{file_name_without_ext}.csv"
         s3_client.put_file(bucket, dist, "\n".join(rows))
