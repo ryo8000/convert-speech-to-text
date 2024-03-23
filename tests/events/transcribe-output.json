@@ -1,0 +1,67 @@
+{
+  "jobName": "my-first-transcription-job",
+  "accountId": "111122223333",
+  "results": {
+    "transcripts": [
+      {
+        "transcript": "Welcome to Amazon Transcribe."
+      }
+    ],
+    "items": [
+      {
+        "start_time": "0.64",
+        "end_time": "1.09",
+        "alternatives": [
+          {
+            "confidence": "1.0",
+            "content": "Welcome"
+          }
+        ],
+        "type": "pronunciation"
+      },
+      {
+        "start_time": "1.09",
+        "end_time": "1.21",
+        "alternatives": [
+          {
+            "confidence": "1.0",
+            "content": "to"
+          }
+        ],
+        "type": "pronunciation"
+      },
+      {
+        "start_time": "1.21",
+        "end_time": "1.74",
+        "alternatives": [
+          {
+            "confidence": "1.0",
+            "content": "Amazon"
+          }
+        ],
+        "type": "pronunciation"
+      },
+      {
+        "start_time": "1.74",
+        "end_time": "2.56",
+        "alternatives": [
+          {
+            "confidence": "1.0",
+            "content": "Transcribe"
+          }
+        ],
+        "type": "pronunciation"
+      },
+      {
+        "alternatives": [
+          {
+            "confidence": "0.0",
+            "content": "."
+          }
+        ],
+        "type": "punctuation"
+      }
+    ]
+  },
+  "status": "COMPLETED"
+}
