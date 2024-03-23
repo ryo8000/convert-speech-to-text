@@ -18,7 +18,8 @@ import json
 from datetime import datetime
 from logging import INFO, getLogger
 
-from aws import lambda_event, s3
+from aws import s3
+from aws.model import SqsEvent
 from aws.transcribe import TranscribeClient
 from config import Config
 
@@ -37,8 +38,8 @@ def lambda_handler(event: dict, context) -> None:
 
 
 def main(event: dict, config: Config, current_datetime: datetime, transcribe_client: TranscribeClient):
-    # Process each message received by the SQS.
-    sqs_event = lambda_event.convert_dict_to_sqs_event(event)
+    # process each message received by the SQS.
+    sqs_event = SqsEvent.from_event(event)
     for sqs_record in sqs_event.records:
         s3_event = sqs_record.body
         if not s3_event:
@@ -47,9 +48,7 @@ def main(event: dict, config: Config, current_datetime: datetime, transcribe_cli
         # create s3 object URL
         s3_record = s3_event.records[0]
         bucket = s3_record.s3.bucket.name
-        key = s3_record.s3.object.key
-        s3_object_url = s3.get_object_url(bucket, key, config.bucket_region)
-        logger.info(s3_object_url)
+        s3_object_url = s3.get_object_url(bucket, s3_record.s3.object.key, config.bucket_region)
 
         # start transcription job
         transcribe_client.start_transcription_job(

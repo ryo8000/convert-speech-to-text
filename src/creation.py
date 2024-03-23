@@ -18,8 +18,7 @@ import json
 import os
 from logging import INFO, getLogger
 
-from aws import lambda_event
-from aws.model import TranscribeOutput
+from aws.model import SqsEvent, TranscribeOutput
 from aws.s3 import S3Client
 from aws.transcribe import TranscribeClient
 from config import Config
@@ -40,7 +39,7 @@ def lambda_handler(event: dict, context) -> None:
 
 def main(event: dict, config: Config, s3_client: S3Client, transcribe_client: TranscribeClient):
     # process each message received by the SQS.
-    sqs_event = lambda_event.convert_dict_to_sqs_event(event)
+    sqs_event = SqsEvent.from_event(event)
     for sqs_record in sqs_event.records:
         s3_event = sqs_record.body
         if not s3_event:
