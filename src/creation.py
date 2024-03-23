@@ -46,9 +46,7 @@ def main(event: dict, config: Config, s3_client: S3Client, transcribe_client: Tr
             continue
 
         # retrieve the json file content output by the transcription job
-        s3_record = s3_event.records[0]
-        bucket = s3_record.s3.bucket.name
-        key = s3_record.s3.object.key
+        bucket, key = s3_event.get_bucket_and_key()
         json_contents = s3_client.get_json_contents(bucket, key)
         logger.debug(json.dumps(json_contents))
         transcribe_output = TranscribeOutput.from_contents(json_contents)

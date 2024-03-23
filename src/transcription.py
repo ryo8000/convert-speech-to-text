@@ -46,9 +46,8 @@ def main(event: dict, config: Config, current_datetime: datetime, transcribe_cli
             continue
 
         # create s3 object URL
-        s3_record = s3_event.records[0]
-        bucket = s3_record.s3.bucket.name
-        s3_object_url = s3.get_object_url(bucket, s3_record.s3.object.key, config.bucket_region)
+        bucket, key = s3_event.get_bucket_and_key()
+        s3_object_url = s3.get_object_url(bucket, key, config.bucket_region)
 
         # start transcription job
         transcribe_client.start_transcription_job(

@@ -21,6 +21,9 @@ from src.aws.model import S3, Bucket, Identity, S3Event, S3Object, S3Record
 
 class TestS3Event(unittest.TestCase):
 
+    def setUp(self):
+        self.s3_event = S3EventFactory.create_s3_event()
+
     def test_from_event(self):
         s3_event = {}
         event_file_path = os.path.join(os.path.dirname(__file__), "..", "..", "events", "s3-event.json")
@@ -28,7 +31,12 @@ class TestS3Event(unittest.TestCase):
             s3_event = json.load(event_file)
 
         actual = S3Event.from_event(s3_event)
-        self.assertEqual(S3EventFactory.create_s3_event(), actual)
+        self.assertEqual(self.s3_event, actual)
+
+    def test_get_bucket_and_key(self):
+        bucket, key = self.s3_event.get_bucket_and_key()
+        self.assertEqual(bucket, "my-bucket")
+        self.assertEqual(key, "input/audiofile.mp3")
 
 
 class S3EventFactory:

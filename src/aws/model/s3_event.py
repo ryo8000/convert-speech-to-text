@@ -16,7 +16,7 @@
 
 import urllib.parse
 from dataclasses import dataclass
-from typing import List
+from typing import List, Tuple
 
 
 @dataclass
@@ -103,3 +103,12 @@ class S3Event:
     @classmethod
     def from_event(cls, event: dict):
         return cls([S3Record.from_event(r) for r in event["Records"]])
+
+    def get_bucket_and_key(self) -> Tuple[str, str]:
+        """Get S3 bucket name and key.
+
+        Returns:
+            S3 bucket name and key
+        """
+        s3_record = self.records[0]
+        return s3_record.s3.bucket.name, s3_record.s3.object.key
