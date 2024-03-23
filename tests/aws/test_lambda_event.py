@@ -16,16 +16,10 @@ import json
 import os
 import unittest
 
-from src.aws import (
-    lambda_event,
-)
+from src.aws import lambda_event
 
-from .model.s3_event import (
-    S3EventFactory,
-)
-from .model.sqs_event import (
-    SqsEventFactory,
-)
+from .model.s3_event import S3EventFactory
+from .model.sqs_event import SqsEventFactory
 
 
 class TestConvertDictToSqsEvent(unittest.TestCase):

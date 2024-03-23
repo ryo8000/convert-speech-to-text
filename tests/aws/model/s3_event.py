@@ -12,14 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from src.aws.model import (
-    S3,
-    Bucket,
-    Identity,
-    S3Event,
-    S3Object,
-    S3Record,
-)
+from src.aws.model import S3, Bucket, Identity, S3Event, S3Object, S3Record
 
 
 class S3EventFactory:

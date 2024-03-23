@@ -15,17 +15,10 @@
 """SQS event module."""
 
 import json
-from dataclasses import (
-    dataclass,
-)
-from typing import (
-    List,
-    Optional,
-)
+from dataclasses import dataclass
+from typing import List, Optional
 
-from .s3_event import (
-    S3Event,
-)
+from .s3_event import S3Event
 
 
 @dataclass

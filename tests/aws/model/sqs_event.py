@@ -12,11 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from src.aws.model import (
-    S3Event,
-    SqsEvent,
-    SqsRecord,
-)
+from src.aws.model import S3Event, SqsEvent, SqsRecord
 
 
 class SqsEventFactory:

@@ -16,13 +16,9 @@ import json
 import unittest
 
 import boto3
-from moto import (
-    mock_aws,
-)
+from moto import mock_aws
 
-from src.aws import (
-    s3,
-)
+from src.aws import s3
 
 
 class TestGetObjectUrl(unittest.TestCase):

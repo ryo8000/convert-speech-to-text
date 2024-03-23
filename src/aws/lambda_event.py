@@ -14,9 +14,7 @@
 
 """Lambda event module."""
 
-from .model import (
-    SqsEvent,
-)
+from .model import SqsEvent
 
 
 def convert_dict_to_sqs_event(event: dict) -> SqsEvent:

@@ -14,21 +14,13 @@
 
 import unittest
 import uuid
-from datetime import (
-    datetime,
-)
-from unittest.mock import (
-    patch,
-)
+from datetime import datetime
+from unittest.mock import patch
 
 import boto3
-from moto import (
-    mock_aws,
-)
+from moto import mock_aws
 
-from src.aws.transcribe import (
-    TranscribeClient,
-)
+from src.aws.transcribe import TranscribeClient
 
 
 class TestTranscribeClient(unittest.TestCase):

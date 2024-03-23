@@ -16,23 +16,12 @@
 
 import json
 import os
-from logging import (
-    INFO,
-    getLogger,
-)
+from logging import INFO, getLogger
 
-from aws import (
-    lambda_event,
-)
-from aws.s3 import (
-    S3Client,
-)
-from aws.transcribe import (
-    TranscribeClient,
-)
-from config import (
-    Config,
-)
+from aws import lambda_event
+from aws.s3 import S3Client
+from aws.transcribe import TranscribeClient
+from config import Config
 
 logger = getLogger(__name__)
 logger.setLevel(INFO)

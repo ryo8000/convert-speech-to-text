@@ -14,13 +14,9 @@
 
 import os
 import unittest
-from unittest.mock import (
-    patch,
-)
+from unittest.mock import patch
 
-from src.config import (
-    Config,
-)
+from src.config import Config
 
 
 class TestConfig(unittest.TestCase):

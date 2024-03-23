@@ -15,24 +15,12 @@
 """Transcription module."""
 
 import json
-from datetime import (
-    datetime,
-)
-from logging import (
-    INFO,
-    getLogger,
-)
+from datetime import datetime
+from logging import INFO, getLogger
 
-from aws import (
-    lambda_event,
-    s3,
-)
-from aws.transcribe import (
-    TranscribeClient,
-)
-from config import (
-    Config,
-)
+from aws import lambda_event, s3
+from aws.transcribe import TranscribeClient
+from config import Config
 
 logger = getLogger(__name__)
 logger.setLevel(INFO)

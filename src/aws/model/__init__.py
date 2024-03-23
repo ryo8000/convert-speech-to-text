@@ -14,15 +14,5 @@
 
 """AWS models package."""
 
-from .s3_event import (  # noqa; Identity,
-    S3,
-    Bucket,
-    Identity,
-    S3Event,
-    S3Object,
-    S3Record,
-)
-from .sqs_event import (  # noqa; Attributes,
-    SqsEvent,
-    SqsRecord,
-)
+from .s3_event import S3, Bucket, Identity, S3Event, S3Object, S3Record  # noqa
+from .sqs_event import SqsEvent, SqsRecord  # noqa

@@ -16,9 +16,7 @@
 
 import os
 import uuid
-from datetime import (
-    datetime,
-)
+from datetime import datetime
 
 import boto3
 
