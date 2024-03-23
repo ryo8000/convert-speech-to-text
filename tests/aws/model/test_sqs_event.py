@@ -23,14 +23,20 @@ from .test_s3_event import S3EventFactory
 
 class TestSqsEvent(unittest.TestCase):
 
+    def setUp(self):
+        self.sqs_event = SqsEventFactory.create_sqs_event()
+
     def test_from_event(self):
-        sqs_event = {}
+        event = {}
         event_file_path = os.path.join(os.path.dirname(__file__), "..", "..", "events", "sqs-event.json")
         with open(event_file_path) as event_file:
-            sqs_event = json.load(event_file)
+            event = json.load(event_file)
 
-        actual = SqsEvent.from_event(sqs_event)
-        self.assertEqual(SqsEventFactory.create_sqs_event(), actual)
+        sqs_event = SqsEvent.from_event(event)
+        self.assertEqual(sqs_event, self.sqs_event)
+
+    def test_extract_s3_events(self):
+        self.assertEqual(self.sqs_event.extract_s3_events(), [S3EventFactory.create_s3_event()])
 
 
 class SqsEventFactory:

@@ -39,10 +39,7 @@ def lambda_handler(event: dict, context) -> None:
 def main(event: dict, config: Config, current_datetime: datetime, transcribe_client: TranscribeClient):
     # process each message received by the SQS.
     sqs_event = SqsEvent.from_event(event)
-    for sqs_record in sqs_event.records:
-        s3_event = sqs_record.body
-        if not s3_event:
-            continue
+    for s3_event in sqs_event.extract_s3_events():
 
         # create s3 object URL
         s3_object_url = s3_event.get_object_url()

@@ -44,3 +44,11 @@ class SqsEvent:
     @classmethod
     def from_event(cls, event: dict):
         return cls([SqsRecord.from_event(r) for r in event["Records"]])
+
+    def extract_s3_events(self) -> List[S3Event]:
+        """Extract normal s3 events
+
+        Returns:
+            Extracted s3 events
+        """
+        return [r.body for r in self.records if r.body is not None]

@@ -40,10 +40,7 @@ def lambda_handler(event: dict, context) -> None:
 def main(event: dict, config: Config, s3_client: S3Client, transcribe_client: TranscribeClient):
     # process each message received by the SQS.
     sqs_event = SqsEvent.from_event(event)
-    for sqs_record in sqs_event.records:
-        s3_event = sqs_record.body
-        if not s3_event:
-            continue
+    for s3_event in sqs_event.extract_s3_events():
 
         # retrieve the json file content output by the transcription job
         bucket, key = s3_event.get_bucket_and_key()
