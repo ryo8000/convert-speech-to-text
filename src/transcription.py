@@ -18,7 +18,6 @@ import json
 from datetime import datetime
 from logging import INFO, getLogger
 
-from aws import s3
 from aws.model import SqsEvent
 from aws.transcribe import TranscribeClient
 from config import Config
@@ -46,10 +45,10 @@ def main(event: dict, config: Config, current_datetime: datetime, transcribe_cli
             continue
 
         # create s3 object URL
-        bucket, key = s3_event.get_bucket_and_key()
-        s3_object_url = s3.get_object_url(bucket, key, config.bucket_region)
+        s3_object_url = s3_event.get_object_url()
 
         # start transcription job
+        bucket = s3_event.get_bucket_and_key()[0]
         transcribe_client.start_transcription_job(
             current_datetime, s3_object_url, config.language_code, bucket, config.transcription_dist_key
         )

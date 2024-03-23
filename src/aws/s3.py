@@ -19,21 +19,6 @@ import json
 import boto3
 
 
-def get_object_url(bucket: str, key: str, region: str) -> str:
-    """Get the url of the S3 object.
-
-    Args:
-        bucket: S3 bucket name
-        key: S3 key name
-        region: S3 bucket region
-
-    Returns:
-        the url of the S3 object
-    """
-    bucket_region = f"{region}." if region != "us-east-1" else ""
-    return f"https://{bucket}.s3.{bucket_region}amazonaws.com/{key}"
-
-
 class S3Client:
     """S3 client class."""
 

@@ -21,19 +21,6 @@ from moto import mock_aws
 from src.aws import s3
 
 
-class TestGetObjectUrl(unittest.TestCase):
-    def test_get_object_url_with_default_region(self):
-        self.assertEqual(
-            s3.get_object_url("test-bucket", "my-key", "us-east-1"), "https://test-bucket.s3.amazonaws.com/my-key"
-        )
-
-    def test_get_object_url_with_non_default_region(self):
-        self.assertEqual(
-            s3.get_object_url("test-bucket", "my-key", "ap-northeast-1"),
-            "https://test-bucket.s3.ap-northeast-1.amazonaws.com/my-key",
-        )
-
-
 @mock_aws
 class TestS3Client(unittest.TestCase):
     @mock_aws

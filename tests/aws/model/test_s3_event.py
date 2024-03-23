@@ -38,17 +38,30 @@ class TestS3Event(unittest.TestCase):
         self.assertEqual(bucket, "my-bucket")
         self.assertEqual(key, "input/audiofile.mp3")
 
+    def test_get_object_url_with_default_region(self):
+        s3_event = S3EventFactory.create_s3_event("us-east-1")
+        self.assertEqual(
+            s3_event.get_object_url(),
+            "https://my-bucket.s3.amazonaws.com/input/audiofile.mp3",
+        )
+
+    def test_get_object_url_with_non_default_region(self):
+        self.assertEqual(
+            self.s3_event.get_object_url(),
+            "https://my-bucket.s3.us-east-2.amazonaws.com/input/audiofile.mp3",
+        )
+
 
 class S3EventFactory:
 
     @staticmethod
-    def create_s3_event() -> S3Event:
+    def create_s3_event(region: str = "us-east-2") -> S3Event:
         return S3Event(
             records=[
                 S3Record(
                     event_version="2.1",
                     event_source="aws:s3",
-                    aws_region="us-east-2",
+                    aws_region=region,
                     event_time="2019-09-03T19:37:27.192Z",
                     event_name="ObjectCreated:Put",
                     user_identity=Identity(principal_id="AWS:AIDAINPONIXQXHT3IKHL2"),

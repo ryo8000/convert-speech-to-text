@@ -105,10 +105,20 @@ class S3Event:
         return cls([S3Record.from_event(r) for r in event["Records"]])
 
     def get_bucket_and_key(self) -> Tuple[str, str]:
-        """Get S3 bucket name and key.
+        """Get bucket name and key.
 
         Returns:
-            S3 bucket name and key
+            bucket name and key
         """
-        s3_record = self.records[0]
-        return s3_record.s3.bucket.name, s3_record.s3.object.key
+        record = self.records[0]
+        return record.s3.bucket.name, record.s3.object.key
+
+    def get_object_url(self) -> str:
+        """Get the object url.
+
+        Returns:
+           the object url
+        """
+        record = self.records[0]
+        bucket_region = f"{record.aws_region}." if record.aws_region != "us-east-1" else ""
+        return f"https://{record.s3.bucket.name}.s3.{bucket_region}amazonaws.com/{record.s3.object.key}"
