@@ -18,8 +18,8 @@ import unittest
 
 from src.aws import lambda_event
 
-from .model.s3_event import S3EventFactory
 from .model.sqs_event import SqsEventFactory
+from .model.test_s3_event import S3EventFactory
 
 
 class TestConvertDictToSqsEvent(unittest.TestCase):
