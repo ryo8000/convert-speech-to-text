@@ -27,12 +27,12 @@ class TestSqsEvent(unittest.TestCase):
         self.sqs_event = SqsEventFactory.create_sqs_event()
 
     def test_from_event(self):
-        event = {}
-        event_file_path = os.path.join(os.path.dirname(__file__), "..", "..", "events", "sqs-event.json")
-        with open(event_file_path) as event_file:
-            event = json.load(event_file)
+        contents = {}
+        file_path = os.path.join(os.path.dirname(__file__), "..", "..", "events", "sqs-event.json")
+        with open(file_path) as file:
+            contents = json.load(file)
 
-        sqs_event = SqsEvent.from_event(event)
+        sqs_event = SqsEvent.from_event(contents)
         self.assertEqual(sqs_event, self.sqs_event)
 
     def test_extract_s3_events(self):

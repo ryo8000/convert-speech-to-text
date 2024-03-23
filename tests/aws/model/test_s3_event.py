@@ -25,13 +25,13 @@ class TestS3Event(unittest.TestCase):
         self.s3_event = S3EventFactory.create_s3_event()
 
     def test_from_event(self):
-        s3_event = {}
-        event_file_path = os.path.join(os.path.dirname(__file__), "..", "..", "events", "s3-event.json")
-        with open(event_file_path) as event_file:
-            s3_event = json.load(event_file)
+        contents = {}
+        file_path = os.path.join(os.path.dirname(__file__), "..", "..", "events", "s3-event.json")
+        with open(file_path) as file:
+            contents = json.load(file)
 
-        actual = S3Event.from_event(s3_event)
-        self.assertEqual(self.s3_event, actual)
+        s3_event = S3Event.from_event(contents)
+        self.assertEqual(s3_event, self.s3_event)
 
     def test_get_bucket_and_key(self):
         bucket, key = self.s3_event.get_bucket_and_key()

@@ -22,13 +22,13 @@ from src.aws.model import Alternative, Item, Results, TranscribeOutput, Transcri
 class TestTranscribeOutput(unittest.TestCase):
 
     def test_from_contents(self):
-        transcribe_output = {}
-        output_file_path = os.path.join(os.path.dirname(__file__), "..", "..", "events", "transcribe-output.json")
-        with open(output_file_path) as output_file:
-            transcribe_output = json.load(output_file)
+        contents = {}
+        file_path = os.path.join(os.path.dirname(__file__), "..", "..", "events", "transcribe-output.json")
+        with open(file_path) as file:
+            contents = json.load(file)
 
-        actual = TranscribeOutput.from_contents(transcribe_output)
-        self.assertEqual(TranscribeOutputFactory.create_transcribe_output(), actual)
+        transcribe_output = TranscribeOutput.from_contents(contents)
+        self.assertEqual(transcribe_output, TranscribeOutputFactory.create_transcribe_output())
 
 
 class TranscribeOutputFactory:
