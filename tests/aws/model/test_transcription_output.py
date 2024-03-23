@@ -21,6 +21,9 @@ from src.aws.model import Alternative, Item, Results, TranscribeOutput, Transcri
 
 class TestTranscribeOutput(unittest.TestCase):
 
+    def setUp(self):
+        self.transcribe_output = TranscribeOutputFactory.create_transcribe_output()
+
     def test_from_contents(self):
         contents = {}
         file_path = os.path.join(os.path.dirname(__file__), "..", "..", "events", "transcribe-output.json")
@@ -28,7 +31,10 @@ class TestTranscribeOutput(unittest.TestCase):
             contents = json.load(file)
 
         transcribe_output = TranscribeOutput.from_contents(contents)
-        self.assertEqual(transcribe_output, TranscribeOutputFactory.create_transcribe_output())
+        self.assertEqual(transcribe_output, self.transcribe_output)
+
+    def test_get_entire_transcript(self):
+        self.assertEqual(self.transcribe_output.get_entire_transcript(), "Welcome to Amazon Transcribe.")
 
 
 class TranscribeOutputFactory:

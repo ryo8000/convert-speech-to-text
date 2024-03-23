@@ -51,7 +51,7 @@ def main(event: dict, config: Config, s3_client: S3Client, transcribe_client: Tr
         # txt
         file_name_without_ext = os.path.splitext(os.path.basename(key))[0]
         dist = f"{config.creation_dist_key}/{file_name_without_ext}.txt"
-        s3_client.put_file(bucket, dist, transcribe_output.results.transcripts[0].transcript)
+        s3_client.put_file(bucket, dist, transcribe_output.get_entire_transcript())
 
         # csv
         rows = ["start_time, end_time, content"]

@@ -82,3 +82,11 @@ class TranscribeOutput:
             results=Results.from_contents(event["results"]),
             status=event["status"],
         )
+
+    def get_entire_transcript(self) -> str:
+        """Get entire transcript
+
+        Returns:
+            entire transcript
+        """
+        return self.results.transcripts[0].transcript
