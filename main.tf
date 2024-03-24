@@ -79,7 +79,6 @@ resource "aws_lambda_function" "lambda_transcription" {
   description = "start a transcription job."
   environment {
     variables = {
-      AWS_S3_BUCKET                 = var.aws_s3_bucket
       AWS_S3_TRANSCRIPTION_DIST_KEY = var.aws_s3_transcription_dist_key
       AWS_S3_CREATION_DIST_KEY      = var.aws_s3_creation_dist_key
       AWS_TRANSCRIBE_LANGUAGE_CODE  = var.aws_transcribe_language_code
@@ -105,7 +104,6 @@ resource "aws_lambda_function" "lambda_creation" {
   description = "create file."
   environment {
     variables = {
-      AWS_S3_BUCKET                 = var.aws_s3_bucket
       AWS_S3_TRANSCRIPTION_DIST_KEY = var.aws_s3_transcription_dist_key
       AWS_S3_CREATION_DIST_KEY      = var.aws_s3_creation_dist_key
       AWS_TRANSCRIBE_LANGUAGE_CODE  = var.aws_transcribe_language_code

@@ -23,7 +23,6 @@ class TestConfig(unittest.TestCase):
     @patch.dict(
         os.environ,
         {
-            "AWS_S3_BUCKET": "test-bucket",
             "AWS_S3_TRANSCRIPTION_DIST_KEY": "transcription-dist-key",
             "AWS_S3_CREATION_DIST_KEY": "creation-dist-key",
             "AWS_TRANSCRIBE_LANGUAGE_CODE": "en-US",
@@ -31,7 +30,6 @@ class TestConfig(unittest.TestCase):
     )
     def test_config_creation_with_valid_env_variables(self):
         config = Config()
-        self.assertEqual(config.bucket, "test-bucket")
         self.assertEqual(config.transcription_dist_key, "transcription-dist-key")
         self.assertEqual(config.creation_dist_key, "creation-dist-key")
         self.assertEqual(config.language_code, "en-US")
