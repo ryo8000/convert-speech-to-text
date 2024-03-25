@@ -48,18 +48,16 @@ def main(event: dict, config: Config, s3_client: S3Client, transcribe_client: Tr
         logger.debug(json.dumps(json_contents))
         transcribe_output = TranscribeOutput.from_contents(json_contents)
 
-        # txt
-        file_name_without_ext = os.path.splitext(os.path.basename(key))[0]
-        dist = f"{config.creation_dist_key}/{file_name_without_ext}.txt"
-        s3_client.put_file(bucket, dist, transcribe_output.get_entire_transcript())
-
-        # csv
-        rows = ["start_time, end_time, content"]
+        # create csv contents
+        rows = ["start_time, end_time, content", f", , {transcribe_output.get_entire_transcript()}"]
         for item in transcribe_output.results.items:
             rows.append(f"{item.start_time}, {item.end_time}, {item.alternatives[0].content}")
 
+        # create csv file
+        file_name_without_ext = os.path.splitext(os.path.basename(key))[0]
         dist = f"{config.creation_dist_key}/{file_name_without_ext}.csv"
         s3_client.put_file(bucket, dist, "\n".join(rows))
+        logger.info(dist)
 
         # delete transcription job
         transcribe_client.delete_transcription_job(file_name_without_ext)
