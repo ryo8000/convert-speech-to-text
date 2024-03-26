@@ -11,3 +11,7 @@ Deploy using terraform. Execute the following command.
 ```
 terraform apply
 ```
+
+Then enter your AWS account id and AWS S3 bucket.
+
+Enter yes to the last question to deploy.
