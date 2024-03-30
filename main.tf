@@ -100,7 +100,7 @@ resource "aws_lambda_function" "lambda_transcription" {
   }
 }
 
-resource "aws_lambda_function" "lambda_creation" {
+resource "aws_lambda_function" "lambda_file_creator" {
   description = "create file."
   environment {
     variables = {
@@ -109,8 +109,8 @@ resource "aws_lambda_function" "lambda_creation" {
       AWS_TRANSCRIBE_LANGUAGE_CODE  = var.aws_transcribe_language_code
     }
   }
-  function_name = "${var.service_name}-creation"
-  handler       = "creation.lambda_handler"
+  function_name = "${var.service_name}-file-creator"
+  handler       = "file_creator.lambda_handler"
   architectures = [
     "x86_64"
   ]
@@ -132,10 +132,10 @@ resource "aws_lambda_event_source_mapping" "LambdaTranscriptionEventSourceMappin
   enabled          = true
 }
 
-resource "aws_lambda_event_source_mapping" "lambdaCreationEventSourceMapping" {
+resource "aws_lambda_event_source_mapping" "lambdaFileCreatorEventSourceMapping" {
   batch_size       = var.lambda_event_batch_size
-  event_source_arn = aws_sqs_queue.CreationQueue.arn
-  function_name    = aws_lambda_function.lambda_creation.arn
+  event_source_arn = aws_sqs_queue.FileCreatorQueue.arn
+  function_name    = aws_lambda_function.lambda_file_creator.arn
   enabled          = true
 }
 
@@ -149,13 +149,13 @@ resource "aws_sqs_queue" "TranscriptionQueue" {
   name                       = "${var.service_name}TranscriptionQueue"
 }
 
-resource "aws_sqs_queue" "CreationQueue" {
+resource "aws_sqs_queue" "FileCreatorQueue" {
   delay_seconds              = var.sqs_delay_seconds
   max_message_size           = var.sqs_max_message_size
   message_retention_seconds  = var.sqs_message_retention_seconds
   receive_wait_time_seconds  = var.sqs_receive_wait_time_seconds
   visibility_timeout_seconds = var.sqs_visibility_timeout_seconds
-  name                       = "${var.service_name}CreationQueue"
+  name                       = "${var.service_name}FileCreatorQueue"
 }
 
 data "aws_iam_policy_document" "TranscriptionQueuePolicy" {
@@ -176,7 +176,7 @@ data "aws_iam_policy_document" "TranscriptionQueuePolicy" {
   }
 }
 
-data "aws_iam_policy_document" "CreationQueuePolicy" {
+data "aws_iam_policy_document" "FileCreatorQueuePolicy" {
   statement {
     sid    = ""
     effect = "Allow"
@@ -185,7 +185,7 @@ data "aws_iam_policy_document" "CreationQueuePolicy" {
       type        = "Service"
     }
     actions   = ["sqs:SendMessage"]
-    resources = [aws_sqs_queue.CreationQueue.arn]
+    resources = [aws_sqs_queue.FileCreatorQueue.arn]
     condition {
       test     = "ArnLike"
       variable = "aws:SourceArn"
@@ -199,7 +199,7 @@ resource "aws_sqs_queue_policy" "TranscriptionQueuePolicy" {
   queue_url = aws_sqs_queue.TranscriptionQueue.id
 }
 
-resource "aws_sqs_queue_policy" "CreationQueuePolicy" {
-  policy    = data.aws_iam_policy_document.CreationQueuePolicy.json
-  queue_url = aws_sqs_queue.CreationQueue.id
+resource "aws_sqs_queue_policy" "FileCreatorQueuePolicy" {
+  policy    = data.aws_iam_policy_document.FileCreatorQueuePolicy.json
+  queue_url = aws_sqs_queue.FileCreatorQueue.id
 }
