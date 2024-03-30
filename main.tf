@@ -101,7 +101,7 @@ resource "aws_lambda_function" "lambda_transcription" {
 }
 
 resource "aws_lambda_function" "lambda_file_creator" {
-  description = "create file."
+  description = "create transcripts."
   environment {
     variables = {
       AWS_S3_TRANSCRIPTION_DIST_KEY = var.aws_s3_transcription_dist_key
