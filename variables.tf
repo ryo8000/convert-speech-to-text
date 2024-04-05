@@ -1,6 +1,6 @@
 variable "service_name" {
   default     = "transcribe"
-  description = "service name"
+  description = "this service name"
   type        = string
 }
 
@@ -52,7 +52,7 @@ variable "lambda_runtime" {
 
 variable "lambda_timeout" {
   default     = 5
-  description = "lambda runtime"
+  description = "lambda timeout"
   type        = number
 }
 
