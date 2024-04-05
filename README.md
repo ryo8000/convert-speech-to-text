@@ -6,15 +6,15 @@ When an audio file is placed in S3, a text file is generated based on the conten
 
 ## Deploy
 
-Deploy using terraform. Execute the following command.
+1. Deploy using terraform. Execute the following command.
 
 ```
 terraform apply
 ```
 
-Then enter your AWS account id and AWS S3 bucket.
+2. Enter your AWS account id, AWS region and AWS S3 bucket.
 
-Enter yes to the last question to deploy.
+3. Enter yes to the last question to deploy.
 
 ## Setup a development environment
 

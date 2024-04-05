@@ -10,7 +10,6 @@ variable "aws_account_id" {
 }
 
 variable "aws_region" {
-  default     = "ap-northeast-1"
   description = "AWS region to deploy products."
   type        = string
 }
