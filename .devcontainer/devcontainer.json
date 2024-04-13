@@ -18,16 +18,17 @@
     // Configure properties specific to VS Code.
     "vscode": {
       "extensions": [
-        "njpwerner.autodocstring", // autoDocstring - Python Docstring Generator
-        "ms-python.autopep8", // autopep8
         "dbaeumer.vscode-eslint", // ESLint(Default)
-        "ms-python.flake8", // flake8
+        "GitHub.vscode-pull-request-github", // GitHub Pull Requests(Default)
+        "ms-python.vscode-pylance", // Pylance(Default)
+        "ms-python.python", // Python(Default)
+        "ms-python.debugpy", // Python Debugger(Default)
+        "njpwerner.autodocstring", // autoDocstring - Python Docstring Generator
+        "ms-python.black-formatter", // Black Formatter
+        "ms-python.flake8", // Flake8
         "VisualStudioExptTeam.vscodeintellicode", // IntelliCode
         "ms-python.isort", // isort
-        "MS-CEINTL.vscode-language-pack-ja", // Japanese Language Pack for Visual Studio Code
-        "ms-python.mypy-type-checker", // Mypy Type Checker
-        "ms-python.vscode-pylance", // Pylance(Default)
-        "ms-python.python" // Python(Default)
+        "ms-python.mypy-type-checker" // Mypy Type Checker
       ]
     }
   }
