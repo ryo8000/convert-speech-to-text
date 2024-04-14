@@ -32,7 +32,7 @@ class TestConfig(unittest.TestCase):
         config = Config()
         self.assertEqual(config.transcription_dist_key, "transcription-dist-key")
         self.assertEqual(config.creation_dist_key, "creation-dist-key")
-        self.assertEqual(config.language_code, "en-UA")
+        self.assertEqual(config.language_code, "en-US")
 
     @patch.dict(os.environ, {}, clear=True)
     def test_config_creation_without_env_variables(self):
