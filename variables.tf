@@ -9,13 +9,13 @@ variable "aws_account_id" {
   type        = string
 }
 
-variable "aws_region" {
-  description = "AWS region to deploy products."
+variable "aws_s3_bucket" {
+  description = "AWS S3 bucket"
   type        = string
 }
 
-variable "aws_s3_bucket" {
-  description = "AWS S3 bucket"
+variable "aws_region" {
+  description = "AWS region to deploy products."
   type        = string
 }
 
