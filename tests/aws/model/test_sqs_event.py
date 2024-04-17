@@ -36,7 +36,8 @@ class TestSqsEvent(unittest.TestCase):
         self.assertEqual(sqs_event, self.sqs_event)
 
     def test_extract_s3_events(self):
-        self.assertEqual(self.sqs_event.extract_s3_events(), [S3EventFactory.create_s3_event()])
+        s3_events = [s3_event for s3_event in self.sqs_event.extract_s3_events()]
+        self.assertEqual(s3_events, [S3EventFactory.create_s3_event()])
 
 
 class SqsEventFactory:

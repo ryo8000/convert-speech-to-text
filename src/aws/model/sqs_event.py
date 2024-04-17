@@ -16,7 +16,7 @@
 
 import json
 from dataclasses import dataclass
-from typing import List, Optional
+from typing import Generator, List, Optional
 
 from .s3_event import S3Event
 
@@ -45,10 +45,13 @@ class SqsEvent:
     def from_event(cls, event: dict):
         return cls([SqsRecord.from_event(r) for r in event["Records"]])
 
-    def extract_s3_events(self) -> List[S3Event]:
+    def extract_s3_events(self) -> Generator[S3Event, None, None]:
         """Extract normal s3 events
 
         Returns:
             Extracted s3 events
         """
-        return [r.body for r in self.records if r.body is not None]
+        for record in self.records:
+            if record.body is None:
+                continue
+            yield record.body
