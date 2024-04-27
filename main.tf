@@ -58,12 +58,30 @@ resource "aws_iam_role_policy" "lambda_transcriber_role_policy" {
           "logs:CreateLogGroup",
           "logs:CreateLogStream",
           "logs:PutLogEvents",
-          "transcribe:StartTranscriptionJob",
-          "sqs:*",
-          "s3:*"
+          "transcribe:StartTranscriptionJob"
         ],
         "Resource" : [
           "*"
+        ]
+      },
+      {
+        "Sid" : "Statement1",
+        "Effect" : "Allow",
+        "Action" : [
+          "sqs:ReceiveMessage",
+          "sqs:DeleteMessage",
+          "sqs:GetQueueAttributes"
+        ],
+        "Resource" : ["${aws_sqs_queue.TranscriberQueue.arn}"]
+      },
+      {
+        "Sid" : "Statement2",
+        "Effect" : "Allow",
+        "Action" : [
+          "s3:*"
+        ],
+        "Resource" : [
+          "arn:aws:s3:::${var.aws_s3_bucket}/*"
         ]
       }
     ]
@@ -84,11 +102,30 @@ resource "aws_iam_role_policy" "lambda_file_creator_role_policy" {
           "logs:CreateLogStream",
           "logs:PutLogEvents",
           "transcribe:DeleteTranscriptionJob",
-          "sqs:*",
-          "s3:*"
         ],
         "Resource" : [
           "*"
+        ]
+      },
+      {
+        "Sid" : "Statement1",
+        "Effect" : "Allow",
+        "Action" : [
+          "sqs:ReceiveMessage",
+          "sqs:DeleteMessage",
+          "sqs:GetQueueAttributes"
+        ],
+        "Resource" : ["${aws_sqs_queue.FileCreatorQueue.arn}"]
+      },
+      {
+        "Sid" : "Statement2",
+        "Effect" : "Allow",
+        "Action" : [
+          "s3:PutObject",
+          "s3:GetObject"
+        ],
+        "Resource" : [
+          "arn:aws:s3:::${var.aws_s3_bucket}/*"
         ]
       }
     ]
