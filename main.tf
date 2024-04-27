@@ -78,7 +78,8 @@ resource "aws_iam_role_policy" "lambda_transcriber_role_policy" {
         "Sid" : "Statement2",
         "Effect" : "Allow",
         "Action" : [
-          "s3:*"
+          "s3:GetObject",
+          "s3:PutObject"
         ],
         "Resource" : [
           "arn:aws:s3:::${var.aws_s3_bucket}/*"
@@ -121,8 +122,8 @@ resource "aws_iam_role_policy" "lambda_file_creator_role_policy" {
         "Sid" : "Statement2",
         "Effect" : "Allow",
         "Action" : [
-          "s3:PutObject",
-          "s3:GetObject"
+          "s3:GetObject",
+          "s3:PutObject"
         ],
         "Resource" : [
           "arn:aws:s3:::${var.aws_s3_bucket}/*"
