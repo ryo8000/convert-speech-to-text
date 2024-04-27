@@ -27,51 +27,72 @@ data "aws_iam_policy_document" "assume_role_policy" {
   }
 }
 
-data "aws_partition" "current" {}
-
-data "aws_iam_policy" "aws_lambda_basic_execution_role" {
-  arn = "arn:${data.aws_partition.current.partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
-}
-
-data "aws_iam_policy" "amazon_transcribe_full_access" {
-  arn = "arn:${data.aws_partition.current.partition}:iam::aws:policy/AmazonTranscribeFullAccess"
-}
-
-data "aws_iam_policy" "amazon_s3_full_access" {
-  arn = "arn:${data.aws_partition.current.partition}:iam::aws:policy/AmazonS3FullAccess"
-}
-
-data "aws_iam_policy" "amazon_sqs_full_access" {
-  arn = "arn:${data.aws_partition.current.partition}:iam::aws:policy/AmazonSQSFullAccess"
-}
-
-resource "aws_iam_role" "lambda_role" {
-  name                 = "${var.service_name}-role"
+resource "aws_iam_role" "lambda_transcriber_role" {
+  name                 = "${var.service_name}-transcriber-role"
   assume_role_policy   = data.aws_iam_policy_document.assume_role_policy.json
-  description          = "only for Transcribe"
+  description          = "Lambda role for ${var.service_name}-transcriber"
   max_session_duration = 3600
   path                 = "/"
   tags                 = {}
 }
 
-resource "aws_iam_role_policy_attachment" "aws_lambda_basic_execution_role_attach" {
-  role       = aws_iam_role.lambda_role.name
-  policy_arn = data.aws_iam_policy.aws_lambda_basic_execution_role.arn
+resource "aws_iam_role" "lambda_file_creator_role" {
+  name                 = "${var.service_name}-file-creator-role"
+  assume_role_policy   = data.aws_iam_policy_document.assume_role_policy.json
+  description          = "Lambda role for ${var.service_name}-file-creator"
+  max_session_duration = 3600
+  path                 = "/"
+  tags                 = {}
 }
 
-resource "aws_iam_role_policy_attachment" "amazon_transcribe_full_access_attach" {
-  role       = aws_iam_role.lambda_role.name
-  policy_arn = data.aws_iam_policy.amazon_transcribe_full_access.arn
+resource "aws_iam_role_policy" "lambda_transcriber_role_policy" {
+  name = "${var.service_name}TranscriberPolicy"
+  role = aws_iam_role.lambda_transcriber_role.id
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        "Sid" : "Statement0",
+        "Effect" : "Allow",
+        "Action" : [
+          "logs:CreateLogGroup",
+          "logs:CreateLogStream",
+          "logs:PutLogEvents",
+          "transcribe:StartTranscriptionJob",
+          "sqs:*",
+          "s3:*"
+        ],
+        "Resource" : [
+          "*"
+        ]
+      }
+    ]
+  })
 }
 
-resource "aws_iam_role_policy_attachment" "amazon_s3_full_access_attach" {
-  role       = aws_iam_role.lambda_role.name
-  policy_arn = data.aws_iam_policy.amazon_s3_full_access.arn
-}
-
-resource "aws_iam_role_policy_attachment" "amazon_sqs_full_access_attach" {
-  role       = aws_iam_role.lambda_role.name
-  policy_arn = data.aws_iam_policy.amazon_sqs_full_access.arn
+resource "aws_iam_role_policy" "lambda_file_creator_role_policy" {
+  name = "${var.service_name}FileCreatorPolicy"
+  role = aws_iam_role.lambda_file_creator_role.id
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        "Sid" : "Statement0",
+        "Effect" : "Allow",
+        "Action" : [
+          "logs:CreateLogGroup",
+          "logs:CreateLogStream",
+          "logs:PutLogEvents",
+          "transcribe:DeleteTranscriptionJob",
+          "sqs:*",
+          "s3:*"
+        ],
+        "Resource" : [
+          "*"
+        ]
+      }
+    ]
+  })
 }
 
 # Lambda
@@ -91,7 +112,7 @@ resource "aws_lambda_function" "lambda_transcriber" {
   ]
   filename         = data.archive_file.lambda_zip.output_path
   memory_size      = var.lambda_memory_size
-  role             = aws_iam_role.lambda_role.arn
+  role             = aws_iam_role.lambda_transcriber_role.arn
   runtime          = var.lambda_runtime
   source_code_hash = data.archive_file.lambda_zip.output_base64sha256
   timeout          = var.lambda_timeout
@@ -116,7 +137,7 @@ resource "aws_lambda_function" "lambda_file_creator" {
   ]
   filename         = data.archive_file.lambda_zip.output_path
   memory_size      = var.lambda_memory_size
-  role             = aws_iam_role.lambda_role.arn
+  role             = aws_iam_role.lambda_file_creator_role.arn
   runtime          = var.lambda_runtime
   source_code_hash = data.archive_file.lambda_zip.output_base64sha256
   timeout          = var.lambda_timeout
