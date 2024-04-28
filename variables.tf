@@ -44,7 +44,7 @@ variable "lambda_memory_size" {
 }
 
 variable "lambda_runtime" {
-  default     = "python3.10"
+  default     = "python3.12"
   description = "lambda runtime"
   type        = string
 }
