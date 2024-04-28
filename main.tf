@@ -1,17 +1,15 @@
 terraform {
-  required_version = ">= 0.12"
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 5.0"
+    }
+  }
+  required_version = ">= 1.2.0"
 }
 
 provider "aws" {
   region = var.aws_region
-}
-
-provider "archive" {}
-
-data "archive_file" "lambda_zip" {
-  type        = "zip"
-  output_path = "src.zip"
-  source_dir  = "src"
 }
 
 # IAM
@@ -28,21 +26,21 @@ data "aws_iam_policy_document" "assume_role_policy" {
 }
 
 resource "aws_iam_role" "lambda_transcriber_role" {
-  name                 = "${var.service_name}-transcriber-role"
-  assume_role_policy   = data.aws_iam_policy_document.assume_role_policy.json
-  description          = "Lambda role for ${var.service_name}-transcriber"
-  max_session_duration = 3600
-  path                 = "/"
-  tags                 = {}
+  name               = "${var.service_name}-transcriber-role"
+  assume_role_policy = data.aws_iam_policy_document.assume_role_policy.json
+  description        = "Lambda role for ${var.service_name}-transcriber"
+  tags = {
+    Service = var.service_name
+  }
 }
 
 resource "aws_iam_role" "lambda_file_creator_role" {
-  name                 = "${var.service_name}-file-creator-role"
-  assume_role_policy   = data.aws_iam_policy_document.assume_role_policy.json
-  description          = "Lambda role for ${var.service_name}-file-creator"
-  max_session_duration = 3600
-  path                 = "/"
-  tags                 = {}
+  name               = "${var.service_name}-file-creator-role"
+  assume_role_policy = data.aws_iam_policy_document.assume_role_policy.json
+  description        = "Lambda role for ${var.service_name}-file-creator"
+  tags = {
+    Service = var.service_name
+  }
 }
 
 resource "aws_iam_role_policy" "lambda_transcriber_role_policy" {
@@ -72,7 +70,7 @@ resource "aws_iam_role_policy" "lambda_transcriber_role_policy" {
           "sqs:DeleteMessage",
           "sqs:GetQueueAttributes"
         ],
-        "Resource" : ["${aws_sqs_queue.TranscriberQueue.arn}"]
+        "Resource" : ["${aws_sqs_queue.transcriber_queue.arn}"]
       },
       {
         "Sid" : "Statement2",
@@ -116,7 +114,7 @@ resource "aws_iam_role_policy" "lambda_file_creator_role_policy" {
           "sqs:DeleteMessage",
           "sqs:GetQueueAttributes"
         ],
-        "Resource" : ["${aws_sqs_queue.FileCreatorQueue.arn}"]
+        "Resource" : ["${aws_sqs_queue.file_creator_queue.arn}"]
       },
       {
         "Sid" : "Statement2",
@@ -134,6 +132,12 @@ resource "aws_iam_role_policy" "lambda_file_creator_role_policy" {
 }
 
 # Lambda
+data "archive_file" "lambda_zip" {
+  type        = "zip"
+  source_dir  = "src"
+  output_path = "lambda_function_payload.zip"
+}
+
 resource "aws_lambda_function" "lambda_transcriber" {
   description = "create a transcription job."
   environment {
@@ -143,19 +147,16 @@ resource "aws_lambda_function" "lambda_transcriber" {
       AWS_TRANSCRIBE_LANGUAGE_CODE  = var.aws_transcribe_language_code
     }
   }
-  function_name = "${var.service_name}-transcriber"
-  handler       = "transcriber.lambda_handler"
-  architectures = [
-    "x86_64"
-  ]
-  filename         = data.archive_file.lambda_zip.output_path
+  filename         = "lambda_function_payload.zip"
+  function_name    = "${var.service_name}-transcriber"
+  handler          = "transcriber.lambda_handler"
   memory_size      = var.lambda_memory_size
   role             = aws_iam_role.lambda_transcriber_role.arn
   runtime          = var.lambda_runtime
   source_code_hash = data.archive_file.lambda_zip.output_base64sha256
   timeout          = var.lambda_timeout
-  tracing_config {
-    mode = "PassThrough"
+  tags = {
+    Service = var.service_name
   }
 }
 
@@ -168,56 +169,57 @@ resource "aws_lambda_function" "lambda_file_creator" {
       AWS_TRANSCRIBE_LANGUAGE_CODE  = var.aws_transcribe_language_code
     }
   }
-  function_name = "${var.service_name}-file-creator"
-  handler       = "file_creator.lambda_handler"
-  architectures = [
-    "x86_64"
-  ]
-  filename         = data.archive_file.lambda_zip.output_path
+  filename         = "lambda_function_payload.zip"
+  function_name    = "${var.service_name}-file-creator"
+  handler          = "file_creator.lambda_handler"
   memory_size      = var.lambda_memory_size
   role             = aws_iam_role.lambda_file_creator_role.arn
   runtime          = var.lambda_runtime
   source_code_hash = data.archive_file.lambda_zip.output_base64sha256
   timeout          = var.lambda_timeout
-  tracing_config {
-    mode = "PassThrough"
+  tags = {
+    Service = var.service_name
   }
 }
 
-resource "aws_lambda_event_source_mapping" "LambdaTranscriberEventSourceMapping" {
+resource "aws_lambda_event_source_mapping" "lambda_transcriber_event_source_mapping" {
   batch_size       = var.lambda_event_batch_size
-  event_source_arn = aws_sqs_queue.TranscriberQueue.arn
+  event_source_arn = aws_sqs_queue.transcriber_queue.arn
   function_name    = aws_lambda_function.lambda_transcriber.arn
-  enabled          = true
 }
 
-resource "aws_lambda_event_source_mapping" "lambdaFileCreatorEventSourceMapping" {
+resource "aws_lambda_event_source_mapping" "lambda_file_creator_event_source_mapping" {
   batch_size       = var.lambda_event_batch_size
-  event_source_arn = aws_sqs_queue.FileCreatorQueue.arn
+  event_source_arn = aws_sqs_queue.file_creator_queue.arn
   function_name    = aws_lambda_function.lambda_file_creator.arn
-  enabled          = true
 }
 
 # SQS
-resource "aws_sqs_queue" "TranscriberQueue" {
-  delay_seconds              = var.sqs_delay_seconds
-  max_message_size           = var.sqs_max_message_size
-  message_retention_seconds  = var.sqs_message_retention_seconds
-  receive_wait_time_seconds  = var.sqs_receive_wait_time_seconds
-  visibility_timeout_seconds = var.sqs_visibility_timeout_seconds
+resource "aws_sqs_queue" "transcriber_queue" {
   name                       = "${var.service_name}TranscriberQueue"
-}
-
-resource "aws_sqs_queue" "FileCreatorQueue" {
   delay_seconds              = var.sqs_delay_seconds
   max_message_size           = var.sqs_max_message_size
   message_retention_seconds  = var.sqs_message_retention_seconds
   receive_wait_time_seconds  = var.sqs_receive_wait_time_seconds
   visibility_timeout_seconds = var.sqs_visibility_timeout_seconds
+  tags = {
+    Service = var.service_name
+  }
+}
+
+resource "aws_sqs_queue" "file_creator_queue" {
   name                       = "${var.service_name}FileCreatorQueue"
+  delay_seconds              = var.sqs_delay_seconds
+  max_message_size           = var.sqs_max_message_size
+  message_retention_seconds  = var.sqs_message_retention_seconds
+  receive_wait_time_seconds  = var.sqs_receive_wait_time_seconds
+  visibility_timeout_seconds = var.sqs_visibility_timeout_seconds
+  tags = {
+    Service = var.service_name
+  }
 }
 
-data "aws_iam_policy_document" "TranscriberQueuePolicy" {
+data "aws_iam_policy_document" "transcriber_queue_policy" {
   statement {
     sid    = ""
     effect = "Allow"
@@ -226,7 +228,7 @@ data "aws_iam_policy_document" "TranscriberQueuePolicy" {
       type        = "Service"
     }
     actions   = ["sqs:SendMessage"]
-    resources = [aws_sqs_queue.TranscriberQueue.arn]
+    resources = [aws_sqs_queue.transcriber_queue.arn]
     condition {
       test     = "ArnLike"
       variable = "aws:SourceArn"
@@ -235,7 +237,7 @@ data "aws_iam_policy_document" "TranscriberQueuePolicy" {
   }
 }
 
-data "aws_iam_policy_document" "FileCreatorQueuePolicy" {
+data "aws_iam_policy_document" "file_creator_queue_policy" {
   statement {
     sid    = ""
     effect = "Allow"
@@ -244,7 +246,7 @@ data "aws_iam_policy_document" "FileCreatorQueuePolicy" {
       type        = "Service"
     }
     actions   = ["sqs:SendMessage"]
-    resources = [aws_sqs_queue.FileCreatorQueue.arn]
+    resources = [aws_sqs_queue.file_creator_queue.arn]
     condition {
       test     = "ArnLike"
       variable = "aws:SourceArn"
@@ -253,12 +255,12 @@ data "aws_iam_policy_document" "FileCreatorQueuePolicy" {
   }
 }
 
-resource "aws_sqs_queue_policy" "TranscriberQueuePolicy" {
-  policy    = data.aws_iam_policy_document.TranscriberQueuePolicy.json
-  queue_url = aws_sqs_queue.TranscriberQueue.id
+resource "aws_sqs_queue_policy" "transcriber_queue_policy" {
+  queue_url = aws_sqs_queue.transcriber_queue.id
+  policy    = data.aws_iam_policy_document.transcriber_queue_policy.json
 }
 
-resource "aws_sqs_queue_policy" "FileCreatorQueuePolicy" {
-  policy    = data.aws_iam_policy_document.FileCreatorQueuePolicy.json
-  queue_url = aws_sqs_queue.FileCreatorQueue.id
+resource "aws_sqs_queue_policy" "file_creator_queue_policy" {
+  queue_url = aws_sqs_queue.file_creator_queue.id
+  policy    = data.aws_iam_policy_document.file_creator_queue_policy.json
 }
