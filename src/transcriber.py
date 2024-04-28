@@ -15,6 +15,7 @@
 """Transcriber module."""
 
 import json
+import sys
 from datetime import datetime
 
 from loguru import logger
@@ -23,11 +24,14 @@ from aws.model import SqsEvent
 from aws.transcribe import TranscribeClient
 from config import Config
 
+config = Config()
+logger.remove(0)
+logger.add(sys.stderr, level=config.lambda_log_level)
+
 
 def lambda_handler(event: dict, context) -> None:
     logger.info(json.dumps(event))
 
-    config = Config()
     current_datetime = datetime.now()
     transcribe_client = TranscribeClient()
 

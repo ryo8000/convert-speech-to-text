@@ -37,6 +37,12 @@ variable "aws_transcribe_language_code" {
   type        = string
 }
 
+variable "lambda_log_level" {
+  default     = "INFO"
+  description = "lambda log level"
+  type        = string
+}
+
 variable "lambda_memory_size" {
   default     = 128
   description = "lambda memory size"

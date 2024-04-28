@@ -16,6 +16,7 @@
 
 import json
 import os
+import sys
 
 from loguru import logger
 
@@ -24,11 +25,14 @@ from aws.s3 import S3Client
 from aws.transcribe import TranscribeClient
 from config import Config
 
+config = Config()
+logger.remove(0)
+logger.add(sys.stderr, level=config.lambda_log_level)
+
 
 def lambda_handler(event: dict, context) -> None:
     logger.info(json.dumps(event))
 
-    config = Config()
     s3_client = S3Client()
     transcribe_client = TranscribeClient()
 
