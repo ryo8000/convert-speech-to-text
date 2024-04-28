@@ -132,14 +132,17 @@ resource "aws_iam_role_policy" "lambda_file_creator_role_policy" {
 }
 
 # Lambda
-data "archive_file" "lambda_zip" {
+data "archive_file" "lambda_function_zip" {
   type        = "zip"
   source_dir  = "src"
-  output_path = "lambda_function_payload.zip"
+  output_path = "dist/lambda/function_payload.zip"
 }
 
 resource "aws_lambda_function" "lambda_transcriber" {
-  description = "create a transcription job."
+  function_name    = "${var.service_name}-transcriber"
+  filename         = data.archive_file.lambda_function_zip.output_path
+  source_code_hash = data.archive_file.lambda_function_zip.output_base64sha256
+  description      = "create a transcription job."
   environment {
     variables = {
       AWS_S3_TRANSCRIPTION_DIST_KEY = var.aws_s3_transcription_dist_key
@@ -147,21 +150,21 @@ resource "aws_lambda_function" "lambda_transcriber" {
       AWS_TRANSCRIBE_LANGUAGE_CODE  = var.aws_transcribe_language_code
     }
   }
-  filename         = "lambda_function_payload.zip"
-  function_name    = "${var.service_name}-transcriber"
-  handler          = "transcriber.lambda_handler"
-  memory_size      = var.lambda_memory_size
-  role             = aws_iam_role.lambda_transcriber_role.arn
-  runtime          = var.lambda_runtime
-  source_code_hash = data.archive_file.lambda_zip.output_base64sha256
-  timeout          = var.lambda_timeout
+  handler     = "transcriber.lambda_handler"
+  memory_size = var.lambda_memory_size
+  role        = aws_iam_role.lambda_transcriber_role.arn
+  runtime     = var.lambda_runtime
+  timeout     = var.lambda_timeout
   tags = {
     Service = var.service_name
   }
 }
 
 resource "aws_lambda_function" "lambda_file_creator" {
-  description = "create transcripts."
+  function_name    = "${var.service_name}-file-creator"
+  filename         = data.archive_file.lambda_function_zip.output_path
+  source_code_hash = data.archive_file.lambda_function_zip.output_base64sha256
+  description      = "create transcripts."
   environment {
     variables = {
       AWS_S3_TRANSCRIPTION_DIST_KEY = var.aws_s3_transcription_dist_key
@@ -169,14 +172,11 @@ resource "aws_lambda_function" "lambda_file_creator" {
       AWS_TRANSCRIBE_LANGUAGE_CODE  = var.aws_transcribe_language_code
     }
   }
-  filename         = "lambda_function_payload.zip"
-  function_name    = "${var.service_name}-file-creator"
-  handler          = "file_creator.lambda_handler"
-  memory_size      = var.lambda_memory_size
-  role             = aws_iam_role.lambda_file_creator_role.arn
-  runtime          = var.lambda_runtime
-  source_code_hash = data.archive_file.lambda_zip.output_base64sha256
-  timeout          = var.lambda_timeout
+  handler     = "file_creator.lambda_handler"
+  memory_size = var.lambda_memory_size
+  role        = aws_iam_role.lambda_file_creator_role.arn
+  runtime     = var.lambda_runtime
+  timeout     = var.lambda_timeout
   tags = {
     Service = var.service_name
   }
