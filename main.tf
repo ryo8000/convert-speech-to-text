@@ -132,6 +132,18 @@ resource "aws_iam_role_policy" "lambda_file_creator_role_policy" {
 }
 
 # Lambda
+data "archive_file" "lambda_layer_zip" {
+  type        = "zip"
+  source_dir  = "build/layers/${var.service_name}"
+  output_path = "dist/lambda/layer_${var.service_name}_payload.zip"
+}
+
+resource "aws_lambda_layer_version" "lambda_layer" {
+  layer_name          = "${var.service_name}-layer"
+  filename            = data.archive_file.lambda_layer_zip.output_path
+  compatible_runtimes = [var.lambda_runtime]
+}
+
 data "archive_file" "lambda_function_zip" {
   type        = "zip"
   source_dir  = "src"
@@ -151,6 +163,7 @@ resource "aws_lambda_function" "lambda_transcriber" {
     }
   }
   handler     = "transcriber.lambda_handler"
+  layers      = [aws_lambda_layer_version.lambda_layer.arn]
   memory_size = var.lambda_memory_size
   role        = aws_iam_role.lambda_transcriber_role.arn
   runtime     = var.lambda_runtime
@@ -173,6 +186,7 @@ resource "aws_lambda_function" "lambda_file_creator" {
     }
   }
   handler     = "file_creator.lambda_handler"
+  layers      = [aws_lambda_layer_version.lambda_layer.arn]
   memory_size = var.lambda_memory_size
   role        = aws_iam_role.lambda_file_creator_role.arn
   runtime     = var.lambda_runtime
