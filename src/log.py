@@ -12,16 +12,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Config module."""
+"""log module."""
 
 import os
+import sys
 
+from loguru import logger
 
-class Config:
-    """Config class."""
-
-    def __init__(self):
-        """__init__ method."""
-        self.transcription_dist_key = os.environ["AWS_S3_TRANSCRIPTION_DIST_KEY"]
-        self.creation_dist_key = os.environ["AWS_S3_CREATION_DIST_KEY"]
-        self.language_code = os.environ["AWS_TRANSCRIBE_LANGUAGE_CODE"]
+logger.remove(0)
+logger.add(
+    sys.stderr,
+    format="[<level>{level}</level>] "
+    "<cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> - <level>{message}</level>",
+    level=os.environ.get("LAMBDA_LOG_LEVEL", "INFO"),
+)
