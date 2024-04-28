@@ -31,7 +31,7 @@ logger.add(sys.stderr, level=config.lambda_log_level)
 
 
 def lambda_handler(event: dict, context) -> None:
-    logger.info(json.dumps(event))
+    logger.debug(json.dumps(event))
 
     s3_client = S3Client()
     transcribe_client = TranscribeClient()
@@ -59,7 +59,7 @@ def main(event: dict, config: Config, s3_client: S3Client, transcribe_client: Tr
         file_name_without_ext = os.path.splitext(os.path.basename(key))[0]
         dist = f"{config.creation_dist_key}/{file_name_without_ext}.csv"
         s3_client.put_file(bucket, dist, "\n".join(rows))
-        logger.info(dist)
+        logger.debug(dist)
 
         # delete transcription job
         transcribe_client.delete_transcription_job(file_name_without_ext)

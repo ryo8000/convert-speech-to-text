@@ -30,7 +30,7 @@ logger.add(sys.stderr, level=config.lambda_log_level)
 
 
 def lambda_handler(event: dict, context) -> None:
-    logger.info(json.dumps(event))
+    logger.debug(json.dumps(event))
 
     current_datetime = datetime.now()
     transcribe_client = TranscribeClient()
