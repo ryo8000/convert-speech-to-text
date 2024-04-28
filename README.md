@@ -12,17 +12,21 @@ When an audio file is placed in S3, a text file is generated based on the conten
 ## Deploy
 
 1. (First time only) Prepare one S3 bucket that this application is linked to.
-2. Execute the following command.
+2. (First time only) Execute the following command.
+   ```
+   terraform init
+   ```
+3. Execute the following command.
    ```
    terraform apply
    ```
-3. Enter values for each of the following items.
+4. Enter values for each of the following items.
    - AWS account id: your AWS account ID
    - AWS S3 bucket: name of the S3 bucket you have prepared
    - AWS region: name of the region where this application is deployed. This must be the same as the region of the S3 bucket you have prepared
-4. Enter 'yes' to the last question. Deployment is then performed.
-5. (First time only) Open AWS console and go to the S3 page.
-6. (First time only) Open the S3 bucket you have prepared and create two S3 event notifications.
+5. Enter 'yes' to the last question. Deployment is then performed.
+6. (First time only) Open AWS console and go to the S3 page.
+7. (First time only) Open the S3 bucket you have prepared and create two S3 event notifications.
    1. Audio file creation event
       - Event name: arbitrary value
       - Prefix: arbitrary S3 key name. Audio files created here are converted to text.
