@@ -16,14 +16,13 @@
 
 import json
 from datetime import datetime
-from logging import INFO, getLogger
+from logging import getLogger
 
 from aws.model import SqsEvent
 from aws.transcribe import TranscribeClient
 from config import Config
 
 logger = getLogger(__name__)
-logger.setLevel(INFO)
 
 
 def lambda_handler(event: dict, context) -> None:

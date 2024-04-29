@@ -37,9 +37,15 @@ variable "aws_transcribe_language_code" {
   type        = string
 }
 
-variable "lambda_log_level" {
+variable "lambda_application_log_level" {
   default     = "INFO"
-  description = "lambda log level"
+  description = "lambda application log level"
+  type        = string
+}
+
+variable "lambda_system_log_level" {
+  default     = "INFO"
+  description = "lambda system log level"
   type        = string
 }
 

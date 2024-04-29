@@ -148,10 +148,14 @@ resource "aws_lambda_function" "lambda_transcriber" {
       AWS_S3_TRANSCRIPTION_DIST_KEY = var.aws_s3_transcription_dist_key
       AWS_S3_CREATION_DIST_KEY      = var.aws_s3_creation_dist_key
       AWS_TRANSCRIBE_LANGUAGE_CODE  = var.aws_transcribe_language_code
-      LAMBDA_LOG_LEVEL              = var.lambda_log_level
     }
   }
-  handler     = "transcriber.lambda_handler"
+  handler = "transcriber.lambda_handler"
+  logging_config {
+    log_format            = "JSON"
+    application_log_level = var.lambda_application_log_level
+    system_log_level      = var.lambda_system_log_level
+  }
   memory_size = var.lambda_memory_size
   role        = aws_iam_role.lambda_transcriber_role.arn
   runtime     = var.lambda_runtime
@@ -171,10 +175,14 @@ resource "aws_lambda_function" "lambda_file_creator" {
       AWS_S3_TRANSCRIPTION_DIST_KEY = var.aws_s3_transcription_dist_key
       AWS_S3_CREATION_DIST_KEY      = var.aws_s3_creation_dist_key
       AWS_TRANSCRIBE_LANGUAGE_CODE  = var.aws_transcribe_language_code
-      LAMBDA_LOG_LEVEL              = var.lambda_log_level
     }
   }
-  handler     = "file_creator.lambda_handler"
+  handler = "file_creator.lambda_handler"
+  logging_config {
+    log_format            = "JSON"
+    application_log_level = var.lambda_application_log_level
+    system_log_level      = var.lambda_system_log_level
+  }
   memory_size = var.lambda_memory_size
   role        = aws_iam_role.lambda_file_creator_role.arn
   runtime     = var.lambda_runtime
