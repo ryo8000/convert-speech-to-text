@@ -48,3 +48,7 @@ Create an audio file in the S3 key created above. After a short time, the text f
 ## Test
 
 Open the workspace in the dev container, and Click on "Testing" in the activity bar.
+
+## License
+
+See [licenses folder](./licenses) for details.
