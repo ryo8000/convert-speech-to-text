@@ -51,4 +51,4 @@ Open the workspace in the dev container, and Click on "Testing" in the activity 
 
 ## License
 
-See [licenses folder](./licenses) for details.
+This is released under the MIT License. See [licenses folder](./licenses) for details.
