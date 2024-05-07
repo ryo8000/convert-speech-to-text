@@ -12,32 +12,32 @@ class S3Client:
         """__init__ method.
 
         Args:
-            client (optional): _s3 client.
+            client (optional): s3 client
         """
         self.client = client or boto3.resource("s3")
 
     def get_json_contents(self, bucket: str, key: str) -> dict:
-        """Retrieve the contents of the JSON file in S3.
+        """Retrieve the contents of a specified JSON file in S3.
 
         Args:
             bucket: S3 bucket name
             key: S3 key name
 
         Returns:
-            dict: result of get file
+            JSON file contents
         """
         response = self.get_file(bucket, key)
         return json.loads(response["Body"].read().decode("utf-8"))
 
     def get_file(self, bucket: str, key: str) -> dict:
-        """Retrieve file in S3.
+        """Retrieve the contents of a specified file in S3.
 
         Args:
             bucket: S3 bucket name
             key: S3 key name
 
         Returns:
-            dict: result of get file
+            file contents
         """
         return self.client.Object(bucket, key).get()
 
@@ -50,6 +50,6 @@ class S3Client:
             contents: file contents
 
         Returns:
-            dict: result of put file
+            result of put file
         """
         return self.client.Object(bucket, key).put(Body=contents)

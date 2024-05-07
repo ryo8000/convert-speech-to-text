@@ -14,7 +14,7 @@ class TranscribeClient:
         """__init__ method.
 
         Args:
-            client: transcribe client
+            client (optional): transcribe client
         """
         self.client = client or boto3.client("transcribe")
 
@@ -31,7 +31,7 @@ class TranscribeClient:
             dist_key: S3 key name of text data output destination
 
         Returns:
-            data about the job
+            result of starting a transcription job
         """
         file_name = os.path.basename(src_object_url)
         ext = os.path.splitext(file_name)[1]
@@ -55,6 +55,6 @@ class TranscribeClient:
             job_name: job to be deleted
 
         Returns:
-            data about the job
+            result of deletion a transcription job
         """
         return self.client.delete_transcription_job(TranscriptionJobName=job_name)
