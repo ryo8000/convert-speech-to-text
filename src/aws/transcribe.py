@@ -8,6 +8,8 @@ import boto3
 
 
 class TranscribeClient:
+    """Transcribe client class."""
+
     DATETIME_FORMAT = "%Y%m%d%H%M%S"
 
     def __init__(self, client=None):
