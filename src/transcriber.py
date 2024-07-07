@@ -1,6 +1,5 @@
 """Transcriber module."""
 
-import json
 from datetime import datetime
 from logging import getLogger
 
@@ -12,7 +11,7 @@ logger = getLogger(__name__)
 
 
 def lambda_handler(event: dict, context) -> None:
-    logger.debug(json.dumps(event))
+    logger.debug("get event.", extra={"event": event})
 
     config = Config()
     current_datetime = datetime.now()

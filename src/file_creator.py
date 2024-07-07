@@ -13,7 +13,7 @@ logger = getLogger(__name__)
 
 
 def lambda_handler(event: dict, context) -> None:
-    logger.debug(json.dumps(event))
+    logger.debug("get event.", extra={"event": event})
 
     config = Config()
     s3_client = S3Client()
